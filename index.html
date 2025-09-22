@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8">
+    <title>Redirecting...</title>
+
+    <meta http-equiv="refresh" content="0; url=https://www.snapchat.com/@jxm.cpl">
+
+    <script>
+        (function () {
+            const web_url = "https://www.snapchat.com/@jxm.cpl";
+            const app_url = "snapchat://add/jxm.cpl";
+
+            try {
+                window.location.replace(app_url);
+
+                setTimeout(() => { window.location.replace(web_url); }, 300);
+            } catch (error) {
+                window.location.replace(web_url);
+            }
+        });
+    </script>
+</head>
+
+<body>
+    Redirecting to Snapchat... If nothing happens, <a href="https://snapchat.com/add/jxm.cpl">Click there.</a>
+</body>
+
+</html>
