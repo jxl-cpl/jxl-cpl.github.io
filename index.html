@@ -2,7 +2,6 @@
 <html lang="fr">
     <head>
         <meta charset="utf-8">
-        <meta name="author" content="Miraii">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>MiMi</title>
 
@@ -331,7 +330,13 @@
         <script id="char-handler" defer>
             const input = document.querySelector(".input");
             const char_count = document.querySelector(".char-count");
+            const content = document.querySelector(".content");
             const max_chars = 45;
+
+            const commands = {
+                help: "Current Commands: help, logs.",
+                logs: "Redirect To Weekly Logs."
+            };
 
             input.addEventListener("input", () => {
                 if (input.textContent.length > max_chars) {
@@ -346,6 +351,10 @@
             input.addEventListener("keydown", (_) => {
                 if (_.key === "Enter") {
                     _.preventDefault();
+                    execute(input.textContent.trim());
+
+                    input.textContent = "";
+                    char_count.textContent = `0/${max_chars}`;
                 }
 
                 if (_.key === "Backspace") {
@@ -368,6 +377,37 @@
                 range.collapse(false);
                 select.removeAllRanges();
                 select.addRange(range);
+            }
+
+            function execute(command) {
+                const line = document.createElement("div");
+                const prompt = document.createElement("span");
+                const accent = document.createElement("span");
+                const output = document.createElement("span");
+
+                line.className = "line";
+                prompt.className = "prompt";
+                prompt.textContent = "miraii@terminal";
+                accent.className = "accent";
+                accent.textContent = "~/";
+                output.style.marginLeft = "5px";
+
+                if (command === "logs") {
+                    setTimeout(() => {
+                        window.location.href = "logs.html";
+                    }, 500);
+
+                    return;
+                }
+
+                output.textContent = commands[command] || `The Command '${command}' Wasn't Found !`;
+
+                line.appendChild(prompt);
+                line.appendChild(accent);
+                line.appendChild(output);
+                content.appendChild(line);
+
+                content.scrollTop = content.scrollHeight;
             }
 
             lucide.createIcons();
