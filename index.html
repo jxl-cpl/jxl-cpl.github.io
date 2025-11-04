@@ -1,0 +1,240 @@
+<!DOCTYPE HTML>
+<html lang="fr">
+    <head>
+        <meta charset="utf-8">
+        <meta name="description" content="MiMi Page !">
+        <meta name="keywords" content="????">
+        <meta name="author" content="Miraii">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>MiMi</title>
+
+        <link href="https://fonts.cdnfonts.com/css/jetbrains-mono" rel="stylesheet">
+
+        <style>
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+
+            :root  {
+                --background-color: #1a1316;
+                --text-color: #eae6e1;
+                --accent-color: #e5b97f;
+            }
+
+            body {
+                background-color: var(--background-color);
+                color: var(--text-color);
+                font-family: "JetBrains Mono", sans-serif;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+            }
+
+            .terminal {
+                width: 800px;
+                height: 600px;
+                border: 1px solid #2a2024;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .topbar {
+                height: 32px;
+                border-bottom: 1px solid #2a2024;
+                padding: 0 5px;
+                align-items: center;
+                display: flex;
+                user-select: none;
+                position: relative;
+            }
+
+            .title {
+                font-size: 12px;
+                color: #d8d3ce;
+                letter-spacing: 0.4px;
+                position: absolute;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+
+            .version {
+                font-size: 10px;
+                color: #7a7276;
+            }
+
+            .buttons {
+                display: flex;
+                gap: 6px;
+                margin-left: auto;
+            }
+
+            .button {
+                font-size: 12px;
+                color: #d8d3ce;
+                background-color: #1e1619;
+                border: 1px solid #2a2024;
+                padding: 3px 10px;
+                cursor: pointer;
+            }
+
+            .content {
+                flex: 1;
+                padding: 8px 10px;
+                font-size: 13px;
+                line-height: 1.6;
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .line {
+                display: inline-flex;
+                flex-wrap: wrap;
+                align-items: center;
+            }
+
+            .prompt {
+                color: var(--accent-color);
+                margin-right: 5px;
+                font-weight: 500;
+            }
+
+            .accent {
+                color: var(--accent-color);
+                margin-right: 5px;
+            }
+
+            .input-container {
+                display: inline-flex;
+                align-items: center;
+                position: relative;
+            }
+
+            .input {
+                outline: none;
+                color: var(--text-color);
+                font-family: inherit;
+                white-space: pre;
+                caret-color: transparent;
+            }
+
+            .cursor {
+                display: inline-block;
+                width: auto;
+                background: none;
+                color: var(--accent-color);
+                animation: blink 1s steps(2, start) infinite;
+                margin-left: 1px;
+            }
+
+            .cursor::after {
+                content: "_";
+            }
+
+            .char-count {
+                font-size: 10px;
+                color: #7a7276;
+                margin-left: 6px;
+                user-select: none;
+            }
+
+            .output {
+                height: 120px;
+                border-top: 1px solid #2a2024;
+                padding: 8px 10px;
+                overflow-y: auto;
+                background-color: #1e1619;
+                font-size: 12px;
+                color: red;
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+            }
+
+            /* Icons */
+            .icon-cog {
+                width: 16px;
+                height: 16px;
+                vertical-align: middle;
+                image-rendering: pixelated;
+            }
+
+            @keyframes blink {
+                50% {
+                    opacity: 0;
+                }
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="terminal">
+            <div class="topbar">
+                <div class="title"># Miraii <span class="version">v1.0.0</span></div>
+
+                <div class="buttons">
+                    <div class="button">Logs</div>
+
+                    <div class="button">
+                        <i data-lucide="cog" class="icon-cog"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content">
+                <div class="line">
+                    <span class="prompt">miraii@terminal</span>
+                    <span class="accent">~/</span>
+
+                    <span class="input-container">
+                        <span class="input" contenteditable="true" autofocus></span>
+                        <span class="cursor"></span>
+                        <span class="char-count">0/45</span>
+                    </span>
+                </div>
+            </div>
+
+            <div class="output"></div>
+        </div>
+
+        <script src="https://unpkg.com/lucide@latest"></script>
+
+        <script id="char-handler" defer>
+            const input = document.querySelector(".input");
+            const char_count = document.querySelector(".char-count");
+            const max_chars = 45;
+
+            input.addEventListener("input", () => {
+                if (input.textContent.length > max_chars) {
+                    input.textContent = input.textContent.slice(0, max_chars);
+
+                    place_caret_end(input);
+                }
+
+                char_count.textContent = `${input.textContent.length}/${max_chars}`;
+            });
+
+            input.addEventListener("keydown", (_) => {
+                if (_.key === "Enter") {
+                    _.preventDefault();
+                }
+            })
+
+            // Helpers:
+            function place_caret_end(element) {
+                const range = document.createRange();
+                const select = window.getSelection();
+
+                range.selectNodeContents(element);
+                range.collapse(false);
+                select.removeAllRanges();
+                select.addRange(range);
+            }
+
+            lucide.createIcons();
+        </script>
+    </body>
+</html>
