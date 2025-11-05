@@ -23,7 +23,7 @@
             body {
                 background-color: var(--background-color);
                 color: var(--text-color);
-                font-family: "JetBrains Mono", sans-serif;
+                font-family: "JetBrains Mono", monospace;
                 display: flex;
                 justify-content: center;
                 align-items: center;
@@ -36,6 +36,11 @@
                 border: 1px solid #2a2024;
                 display: flex;
                 flex-direction: column;
+                z-index: 1;
+
+                background-color: rgba(30, 22, 25, 0.6);
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
             }
 
             .topbar {
@@ -86,6 +91,14 @@
                 overflow: hidden;
                 display: flex;
                 flex-direction: column;
+            }
+
+            .content pre, .content canvas {
+                width: 100%;
+                max-width: 800px;
+                overflow: hidden;
+                font-size: 10px;
+                line-height: 10px;
             }
 
             .line {
@@ -328,14 +341,14 @@
 
         <script src="https://unpkg.com/lucide@latest"></script>
 
-        <script id="char-handler" defer>
+        <script id="char-handler">
             const input = document.querySelector(".input");
             const char_count = document.querySelector(".char-count");
             const content = document.querySelector(".content");
             const max_chars = 45;
 
             const commands = {
-                help: "Current Commands: help, logs.",
+                help: "Current Commands: help, logs, matrix.",
                 logs: "Redirect To Weekly Logs."
             };
 
@@ -380,7 +393,11 @@
                 select.addRange(range);
             }
 
-            function execute(command) {
+            let no_matrix = null;
+
+            function execute(raw_command) {
+                const command = raw_command.toLowerCase().trim().replace(/^command\s+/, "");
+
                 const line = document.createElement("div");
                 const prompt = document.createElement("span");
                 const accent = document.createElement("span");
@@ -401,6 +418,25 @@
                     return;
                 }
 
+                if (command === "matrix") {
+                    if (!no_matrix) {
+                        no_matrix = matrix();
+                        output.textContent = "Matrix !!!";
+                    } else {
+                        no_matrix();
+                        no_matrix = null;
+                        output.textContent = "Stopped.";
+                    }
+
+                    line.appendChild(prompt);
+                    line.appendChild(accent);
+                    line.appendChild(output);
+                    content.appendChild(line);
+                    content.scrollTop = content.scrollHeight;
+
+                    return;
+                }
+
                 output.textContent = commands[command] || `The Command '${command}' Wasn't Found !`;
 
                 line.appendChild(prompt);
@@ -409,6 +445,62 @@
                 content.appendChild(line);
 
                 content.scrollTop = content.scrollHeight;
+            }
+
+            function matrix() {
+                const canvas = document.createElement("canvas");
+                const context = canvas.getContext("2d");
+                const terminal = document.querySelector(".terminal");
+
+                canvas.id = "matrix_background";
+                document.body.appendChild(canvas)
+
+                canvas.style.position = "fixed";
+                canvas.style.top = 0;
+                canvas.style.left = 0;
+                canvas.style.width = "100%";
+                canvas.style.height = "100%";
+                canvas.style.zIndex = -9999;
+                canvas.style.pointerEvents = "none";
+
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+
+                const letters = "ミレイミレイミレイMIRAI010101".split("");
+                const font_size = 14;
+                const columns = canvas.width / font_size;
+                const drops = Array(Math.floor(columns)).fill(1);
+
+                function draw() {
+                    context.fillStyle = "rgba(26, 19, 22, 0.05)";
+                    context.fillRect(0, 0, canvas.width, canvas.height);
+                    context.fillStyle = "#e5b97f";
+                    context.font = font_size + "px JetBrains Mono";
+
+                    for (let i = 0; i < drops.length; i++) {
+                        const text = letters[Math.floor(Math.random() * letters.length)];
+
+                        context.fillText(text, i * font_size, drops[i] * font_size);
+
+                        if (drops[i] * font_size > canvas.height && Math.random() > 0.975) {
+                            drops[i] = 0;
+                        }
+
+                        drops[i]++;
+                    }
+                }
+
+                const interval = setInterval(draw, 40);
+
+                window.addEventListener("resize", () => {
+                    canvas.width = window.innerWidth;
+                    canvas.height = window.innerHeight;
+                });
+
+                return () => {
+                    clearInterval(interval);
+                    canvas.remove();
+                };
             }
 
             lucide.createIcons();
