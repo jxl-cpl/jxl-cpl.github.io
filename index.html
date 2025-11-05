@@ -382,6 +382,19 @@
                 }
             })
 
+            document.addEventListener("click", (event) => {
+                if (
+                    event.target.closest(".button") ||
+                    event.target.closest(".modal") ||
+                    event.target.closest(".link-container")
+                ) {
+                    return;
+                }
+
+                input.focus();
+                place_caret_end(input);
+            });
+
             // Helpers:
             function place_caret_end(element) {
                 const range = document.createRange();
