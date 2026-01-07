@@ -1,103 +1,114 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html lang="fr">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MiMi - Logs</title>
 
+    <!-- Meta Description -->
+    <meta name="description"
+        content="MiMi Terminal - An interactive terminal experience by Miraii. Explore commands, themes, and more!">
+
+    <!-- Open Graph / Discord -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="MiMi Terminal">
+    <meta property="og:description"
+        content="An interactive terminal experience by Miraii. Explore commands, themes, and more!">
+    <meta property="og:image" content="https://images.guns.lol/Lbsfh.jpg">
+    <meta property="og:url" content="https://jxl-cpl.github.io">
+
+    <title>MiMi</title>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Quotation",
+  "text": "This memoir is one of the most brutally honest books I've ever read. You will grow to believe, and cheer on, this flawed hero as he gains a liberating knowledge of himself.",
+  "author": {
+    "@type": "Person",
+    "name": "Joe Loya"
+  },
+  "keywords": ["memoir"]
+}
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
         :root {
             --background-color: #1a1316;
-            --text-color: #eae6e1;
+            --text-color: #d8d3ce;
             --accent-color: #e5b97f;
             --border-color: #2a2024;
+            --secondary-text-color: #7a7276;
         }
 
-        :root.light-mode {
+        :root[data-theme="white"] {
             --background-color: #f5f5f5;
-            --text-color: #2a2024;
-            --accent-color: #8b5a3c;
-            --border-color: #d0d0d0;
+            --text-color: #2a2a2a;
+            --accent-color: #d97706;
+            --border-color: #d1d5db;
+            --secondary-text-color: #6b7280;
         }
 
-        :root.light-mode .topbar {
-            background-color: #e0e0e0;
-        }
-
-        :root.light-mode .button {
-            background-color: #f0f0f0;
-            color: var(--text-color);
-        }
-
-        :root.light-mode .search-input {
-            background-color: #ffffff;
-        }
-
-        :root.light-mode .footer {
-            background-color: #e0e0e0;
-            color: #666;
-        }
-
-        :root.light-mode .modal-window {
-            background-color: var(--background-color);
-            border-color: var(--border-color);
-        }
-
-        :root.light-mode .setting-btn {
-            background-color: #f0f0f0;
-            border-color: var(--border-color);
-            color: var(--text-color);
+        :root[data-theme="mint"] {
+            --background-color: #0d1b1a;
+            --text-color: #a8e6cf;
+            --accent-color: #4dd0a0;
+            --border-color: #1a2e2b;
+            --secondary-text-color: #6b9b8a;
         }
 
         * {
             box-sizing: border-box;
+        }
+
+        html,
+        body {
             margin: 0;
             padding: 0;
+            height: 100%;
+            overflow: hidden;
         }
 
         body {
             background-color: var(--background-color);
+            background-image: url('https://images.guns.lol/Lbsfh.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            image-rendering: high-quality;
             color: var(--text-color);
             font-family: "Inter", sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
         }
 
-        .window {
+        body.matrix-active {
+            background-image: none;
+        }
+
+        .terminal {
             width: 800px;
             height: 600px;
             border: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
-            max-width: 95vw;
-            max-height: 95vh;
+            z-index: 1;
+            background-color: rgba(30, 22, 25, 0.5);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
         }
 
-        .topbar {
-            height: 40px;
-            border-bottom: 1px solid var(--border-color);
-            padding: 0 5px;
-            align-items: center;
-            display: flex;
-            user-select: none;
-            position: relative;
-            background-color: #1e1619;
-            justify-content: space-between;
+        :root[data-theme="light"] .terminal,
+        :root[data-theme="white"] .terminal {
+            background-color: rgba(255, 255, 255, 0.9);
         }
 
-        .category-bar {
-            height: 30px;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            gap: 10px;
-            padding: 0 15px;
-            background-color: #1e1619;
-            align-items: center;
+        :root[data-theme="mint"] .terminal {
+            background-color: rgba(13, 27, 26, 0.5);
         }
 
         .content-area {
@@ -106,94 +117,106 @@
             overflow: hidden;
         }
 
-        .category-btn {
-            font-size: 11px;
-            color: #d8d3ce;
-            background-color: transparent;
-            border: 1px solid var(--border-color);
-            padding: 4px 8px;
-            cursor: pointer;
-            transition: 0.2s ease;
-        }
-
-        .category-btn.active {
-            background-color: var(--accent-color);
-            color: var(--background-color);
+        header.topbar {
+            height: 32px;
+            border-bottom: 1px solid var(--border-color);
+            padding: 0 5px;
+            align-items: center;
+            display: flex;
+            user-select: none;
+            position: relative;
+            background-color: var(--background-color);
         }
 
         .title {
             font-size: 12px;
-            color: #d8d3ce;
-            letter-spacing: 0.4px;
-        }
-
-        .search-container {
-            flex: 1;
-            margin: 0 10px;
-        }
-
-        .search-input {
-            width: 100%;
-            background-color: var(--background-color);
             color: var(--text-color);
-            border: 1px solid var(--border-color);
-            padding: 4px 8px;
-            font-size: 12px;
-            font-family: inherit;
-            outline: none;
+            letter-spacing: 0.4px;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
         }
 
-        .search-input:focus {
-            border-color: var(--accent-color);
+        .version {
+            font-size: 10px;
+            color: var(--secondary-text-color);
         }
 
         .buttons {
             display: flex;
             gap: 6px;
+            margin-left: auto;
         }
 
         .button {
-            font-size: 12px;
-            color: #d8d3ce;
-            background-color: #1e1619;
+            font-size: 11px;
+            color: var(--text-color);
+            background-color: var(--background-color);
             border: 1px solid var(--border-color);
-            padding: 3px 10px;
+            padding: 1px 6px;
             cursor: pointer;
-            text-decoration: none;
-            transition: 0.2s ease;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 20px;
+            min-width: 20px;
         }
 
-        .icon-btn {
-            padding: 3px 6px;
+        .button i {
+            width: 12px;
+            height: 12px;
         }
 
-        .btn-icon {
-            width: 14px;
-            height: 14px;
+
+        #theme-toggle i {
+            width: 16px;
+            height: 16px;
+        }
+
+        #theme-icon {
+            width: 16px;
+            height: 16px;
+        }
+
+        .button:hover {
+            background-color: var(--border-color);
+        }
+
+        :root[data-theme="light"] .button:hover {
+            background-color: #e5e7eb;
         }
 
         .content {
             flex: 1;
-            padding: 10px 15px;
+            padding: 8px 10px;
             font-size: 13px;
             line-height: 1.6;
             overflow-y: auto;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
         }
 
-        .category {
-            margin-bottom: 30px;
+        .content::-webkit-scrollbar {
+            width: 6px;
         }
 
-        .category-title {
-            color: var(--accent-color);
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 10px;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 5px;
+        .content::-webkit-scrollbar-track {
+            background: var(--background-color);
         }
 
-        .footer {
+        .content::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 3px;
+        }
+
+        .content::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-color);
+        }
+
+        footer.footer {
             height: 24px;
             border-top: 1px solid var(--border-color);
             padding: 0 10px;
@@ -201,110 +224,201 @@
             align-items: center;
             justify-content: space-between;
             font-size: 10px;
-            color: #7a7276;
-            background-color: #1e1619;
+            color: var(--secondary-text-color);
+            background-color: var(--background-color);
         }
 
-        /* Scrollbar styling */
-        ::-webkit-scrollbar {
-            width: 8px;
+        .content pre,
+        .content canvas {
+            width: 100%;
+            max-width: 800px;
+            overflow: hidden;
+            font-size: 10px;
+            line-height: 10px;
         }
 
-        ::-webkit-scrollbar-track {
-            background: var(--background-color);
+        .line {
+            display: inline-flex;
+            flex-wrap: wrap;
+            align-items: center;
         }
 
-        ::-webkit-scrollbar-thumb {
-            background: var(--border-color);
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--accent-color);
-        }
-
-        .week-logs {
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .week-title {
+        .prompt {
             color: var(--accent-color);
-            font-weight: 600;
-            margin-bottom: 5px;
-            cursor: pointer;
+            margin-right: 5px;
+            font-weight: 500;
         }
 
-        .week-date {
-            font-size: 11px;
-            color: #7a7276;
-            margin-bottom: 8px;
+        .accent {
+            color: var(--accent-color);
+            margin-right: 5px;
         }
 
-        .week-text {
+        .input-container {
+            display: inline-flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .input {
+            outline: none;
             color: var(--text-color);
-            white-space: pre-line;
+            font-family: inherit;
+            white-space: pre;
+            caret-color: transparent;
         }
 
-        .change-added {
-            color: #4ade80;
+        .cursor {
+            display: inline-block;
+            width: auto;
+            background: none;
+            color: var(--accent-color);
+            animation: blink 1s steps(2, start) infinite;
+            margin-left: 1px;
         }
 
-        .change-removed {
-            color: #f87171;
+        .cursor::after {
+            content: "_";
         }
 
-        .change-improved {
-            color: #fbbf24;
+        .char-count {
+            font-size: 10px;
+            color: var(--secondary-text-color);
+            margin-left: 6px;
+            user-select: none;
+        }
+
+        .icon-hand-heart {
+            width: 16px;
+            height: 16px;
+            vertical-align: middle;
+            image-rendering: pixelated;
         }
 
         .modal {
-            display: none;
             position: fixed;
-            inset: 0;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background-color: rgba(26, 19, 22, 0.85);
+            display: none;
             justify-content: center;
             align-items: center;
             z-index: 9999;
         }
 
-        .modal-window {
-            width: 600px;
-            border: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            background-color: var(--background-color);
+        :root[data-theme="light"] .modal {
+            background-color: rgba(245, 245, 245, 0.9);
         }
 
         .modal-topbar {
-            height: 40px;
+            height: 32px;
             border-bottom: 1px solid var(--border-color);
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 0 5px;
+            background-color: var(--background-color);
         }
 
-        .modal-nav {
+        .modal-window {
+            width: 400px;
+            max-width: 90%;
+            border: 1px solid var(--border-color);
+            background-color: var(--background-color);
             display: flex;
-            gap: 5px;
+            flex-direction: column;
         }
 
         .modal-title {
             font-size: 12px;
             color: var(--text-color);
+            letter-spacing: 0.4px;
             text-align: center;
             flex: 1;
+            user-select: none;
+        }
+
+        .modal-window .button {
+            font-size: 11px;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            border: 1px solid var(--border-color);
+            padding: 1px 6px;
+            cursor: pointer;
+            height: 20px;
+            min-width: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .modal-content {
             padding: 10px;
             font-size: 13px;
             color: var(--text-color);
-            white-space: pre-line;
             display: flex;
             flex-direction: column;
             gap: 15px;
+            overflow: hidden;
+        }
+
+        #lucide-modal .modal-content {
+            gap: 10px;
+        }
+
+        .theme-option {
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            background-color: var(--background-color);
+            color: var(--text-color);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .theme-option:hover {
+            background-color: var(--border-color);
+            border-color: var(--accent-color);
+        }
+
+        .theme-option.active {
+            border-color: var(--accent-color);
+            background-color: rgba(229, 185, 127, 0.1);
+        }
+
+        :root[data-theme="white"] .theme-option.active,
+        :root[data-theme="mint"] .theme-option.active {
+            background-color: rgba(77, 208, 160, 0.1);
+        }
+
+        .theme-name {
+            font-weight: 500;
+            font-size: 13px;
+        }
+
+        .theme-preview {
+            width: 20px;
+            height: 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 3px;
+            margin-left: 10px;
+        }
+
+        .theme-preview.dark {
+            background: linear-gradient(135deg, #1a1316 0%, #2a2024 100%);
+        }
+
+        .theme-preview.white {
+            background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%);
+        }
+
+        .theme-preview.mint {
+            background: linear-gradient(135deg, #0d1b1a 0%, #1a2e2b 100%);
         }
 
         .settings-tabs {
@@ -331,486 +445,2590 @@
         .tab-content {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 10px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .tab-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .tab-content::-webkit-scrollbar-track {
+            background: var(--background-color);
+        }
+
+        .tab-content::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 3px;
+        }
+
+        .tab-content::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-color);
         }
 
         .tab-content.hidden {
             display: none;
         }
 
-        .setting-item {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
+        .search-container {
+            margin-bottom: 10px;
         }
 
-        .setting-btn {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 12px;
-            color: #d8d3ce;
-            background-color: #1e1619;
-            border: 1px solid var(--border-color);
-            padding: 8px 12px;
-            cursor: pointer;
-            transition: 0.2s ease;
+        .help-search {
             width: 100%;
-            text-align: left;
+            padding: 8px 12px;
+            background-color: var(--background-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            font-family: "Inter", sans-serif;
+            font-size: 13px;
+            outline: none;
+            transition: border-color 0.2s;
         }
 
-        .setting-btn:hover {
-            background-color: #2a2024;
+        .help-search:focus {
             border-color: var(--accent-color);
         }
 
-        .setting-icon {
-            width: 16px;
-            height: 16px;
-            flex-shrink: 0;
+        .help-search::placeholder {
+            color: var(--secondary-text-color);
         }
 
-        .setting-desc {
+        .cmd-item.hidden {
+            display: none;
+        }
+
+        body.gravity-active * {
+            position: relative;
+            cursor: grab;
+        }
+
+        body.gravity-active *:active {
+            cursor: grabbing;
+        }
+
+        .gravity-element {
+            position: fixed !important;
+            will-change: transform;
+        }
+
+        .cmd-item {
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            background-color: var(--background-color);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-radius: 2px;
+        }
+
+        .cmd-item:hover {
+            background-color: #2a1f23;
+            border-color: var(--accent-color);
+        }
+
+        :root[data-theme="light"] .cmd-item:hover {
+            background-color: #f3f4f6;
+        }
+
+        .cmd-name {
+            font-weight: 600;
+            color: var(--accent-color);
+            font-size: 13px;
+            margin-bottom: 4px;
+        }
+
+        .cmd-desc {
+            font-size: 11px;
+            color: var(--secondary-text-color);
+            line-height: 1.4;
+        }
+
+        .cmd-detail {
+            display: none;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid var(--border-color);
+            font-size: 11px;
+            color: var(--text-color);
+            line-height: 1.5;
+        }
+
+        .cmd-item.expanded .cmd-detail {
+            display: block;
+        }
+
+        .cmd-item.expanded {
+            background-color: #2a1f23;
+        }
+
+        :root[data-theme="light"] .cmd-item.expanded {
+            background-color: #f3f4f6;
+        }
+
+        .quote-container {
+            margin: 8px 0;
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            background-color: rgba(30, 22, 25, 0.6);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            max-width: 100%;
+            display: inline-flex;
+            flex-direction: column;
+            gap: 4px;
+            width: fit-content;
+            min-width: 200px;
+        }
+
+        :root[data-theme="light"] .quote-container {
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+
+        .quote-text {
+            font-size: 13px;
+            line-height: 1.5;
+            color: var(--text-color);
+            font-style: italic;
+            word-wrap: break-word;
+        }
+
+        .quote-author {
             font-size: 10px;
-            color: #7a7276;
-            margin: 0;
-            padding-left: 24px;
+            color: var(--secondary-text-color);
+            margin-top: 2px;
         }
 
-        .close-button {
+        .quote-id {
+            font-size: 9px;
+            color: var(--secondary-text-color);
+            opacity: 0.7;
+            font-family: monospace;
+            margin-top: 1px;
+        }
+
+        #cube-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            height: 400px;
+            z-index: 10000;
+            border: 1px solid var(--border-color);
+            background-color: rgba(26, 19, 22, 0.95);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        :root[data-theme="light"] #cube-container {
+            background-color: rgba(255, 255, 255, 0.95);
+        }
+
+        #cube-container canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .cube-controls {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 10001;
+        }
+
+        .cube-btn {
+            padding: 6px 12px;
+            background-color: var(--background-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 11px;
+            transition: all 0.2s;
+        }
+
+        .cube-btn:hover {
+            background-color: var(--border-color);
+            border-color: var(--accent-color);
+        }
+
+        .shape-tabs {
+            position: absolute;
+            top: 40px;
+            left: 0;
+            right: 0;
+            display: flex;
+            gap: 5px;
+            padding: 5px;
+            background-color: rgba(26, 19, 22, 0.8);
+            border-bottom: 1px solid var(--border-color);
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        :root[data-theme="light"] .shape-tabs {
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+
+        .shape-tab {
+            padding: 4px 8px;
+            background-color: var(--background-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 10px;
+            transition: all 0.2s;
+        }
+
+        .shape-tab.active {
+            background-color: var(--accent-color);
+            color: var(--background-color);
+            border-color: var(--accent-color);
+        }
+
+        .shape-tab:hover {
+            background-color: var(--border-color);
+        }
+
+        #sorter-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            max-width: 90%;
+            max-height: 80vh;
+            z-index: 10000;
+            border: 1px solid var(--border-color);
+            background-color: var(--background-color);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sorter-header {
+            padding: 10px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sorter-title {
             font-size: 12px;
             color: var(--text-color);
-            background-color: #1e1619;
+            font-weight: 600;
+        }
+
+        .sorter-controls {
+            padding: 10px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .sorter-control-group {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .sorter-control-group label {
+            font-size: 11px;
+            color: var(--text-color);
+        }
+
+        .sorter-control-group select {
+            padding: 6px 10px;
+            padding-right: 30px;
+            background-color: var(--background-color);
             border: 1px solid var(--border-color);
-            padding: 2px 6px;
+            color: var(--text-color);
+            font-size: 11px;
+            font-family: inherit;
+            outline: none;
+            transition: all 0.2s;
+            cursor: pointer;
+            min-width: 100px;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23e5b97f' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+            background-size: 12px;
+        }
+
+        .sorter-control-group input {
+            padding: 6px 10px;
+            background-color: var(--background-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            font-size: 11px;
+            font-family: inherit;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .sorter-control-group select:hover,
+        .sorter-control-group input:hover {
+            border-color: var(--accent-color);
+            background-color: rgba(229, 185, 127, 0.1);
+        }
+
+        .sorter-control-group select:focus,
+        .sorter-control-group input:focus {
+            border-color: var(--accent-color);
+            background-color: rgba(229, 185, 127, 0.15);
+        }
+
+        .sorter-control-group select:active {
+            border-color: var(--accent-color);
+        }
+
+        .sorter-control-group select option {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            padding: 8px;
+        }
+
+        .sorter-control-group input[type="number"] {
+            width: 60px;
+            cursor: text;
+            padding-right: 10px;
+            background-image: none;
+        }
+
+        .sorter-control-group input[type="number"]::-webkit-inner-spin-button,
+        .sorter-control-group input[type="number"]::-webkit-outer-spin-button {
+            opacity: 1;
             cursor: pointer;
         }
 
-        .icon-close {
-            width: 14px;
-            height: 14px;
+        .sorter-canvas-container {
+            flex: 1;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 300px;
+            overflow: auto;
         }
 
-        @media (max-width: 600px) {
-            .window {
-                width: 95vw;
-                height: 90vh;
-            }
-
-            .topbar {
-                flex-wrap: wrap;
-                height: auto;
-                padding: 5px;
-            }
-
-            .title {
-                order: 1;
-                flex: 1 0 100%;
-                text-align: center;
-                margin-bottom: 5px;
-            }
-
-            .search-container {
-                order: 2;
-                flex: 1;
-                margin: 0 5px;
-            }
-
-            .buttons {
-                order: 3;
-                flex-wrap: wrap;
-                gap: 3px;
-            }
-
-            .button {
-                font-size: 10px;
-                padding: 2px 5px;
-            }
-
-            .footer {
-                font-size: 9px;
-                padding: 0 5px;
-                height: 20px;
-            }
-
-            .modal-window {
-                width: 90vw;
-                max-height: 80vh;
-            }
-
-            .modal-content {
-                gap: 10px;
-            }
-
-            .setting-btn {
-                padding: 6px 8px;
-                font-size: 11px;
-            }
-
-            .setting-desc {
-                font-size: 9px;
-                padding-left: 20px;
-            }
-
-            .category-bar {
-                padding: 0 5px;
-                gap: 5px;
-            }
-
-            .category-btn {
-                font-size: 9px;
-                padding: 2px 4px;
-            }
+        #sorter-canvas {
+            background-color: var(--background-color);
+            border: 1px solid var(--border-color);
         }
 
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
+        .sorter-status {
+            padding: 8px 10px;
+            border-top: 1px solid var(--border-color);
+            font-size: 11px;
+            color: var(--secondary-text-color);
+            display: flex;
+            justify-content: space-between;
+        }
 
+        .user-id {
+            font-size: 10px;
+            color: var(--secondary-text-color);
+        }
+
+        .link-container {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 8px;
+            padding: 6px 12px;
+            min-width: 150px;
+            height: auto;
+            border: 1px solid var(--border-color);
+            background-color: var(--background-color);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex-direction: row;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .link-container:visited {
+            color: inherit;
+        }
+
+        .link-container:hover {
+            background-color: #2a1f23;
+            border-color: var(--accent-color);
+        }
+
+        :root[data-theme="light"] .link-container:hover {
+            background-color: #f3f4f6;
+        }
+
+        .github-logo,
+        .lucide-logo,
+        .guns-logo {
+            width: 20px;
+            height: 20px;
+        }
+
+        .credits-section {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .credits-section-title {
+            font-size: 11px;
+            color: var(--secondary-text-color);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .link-text-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .link-text {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .link-subtext {
+            font-size: 10px;
+            color: var(--secondary-text-color);
+        }
+
+        @keyframes blink {
+
+            0%,
             100% {
-                transform: rotate(360deg);
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
             }
         }
     </style>
 </head>
 
 <body>
-    <main class="window">
+    <div class="terminal">
         <header class="topbar">
-            <div class="title"># Weekly Logs</div>
-
-            <div class="search-container">
-                <input type="text" class="search-input" placeholder="Search logs..." id="search-input">
-            </div>
-
+            <div class="title"># Miraii <span class="version">v3.5</span></div>
             <div class="buttons">
-                <button class="button icon-btn" id="settings-btn">
-                    <i data-lucide="settings" class="btn-icon"></i>
+                <button class="button" id="theme-toggle" title="Select theme">
+                    <i data-lucide="palette" id="theme-icon"></i>
                 </button>
-                <a href="index.html" class="button">&lt;-</a>
+                <button class="button" id="credits-button">
+                    <i data-lucide="hand-heart" class="icon-hand-heart"></i>
+                </button>
             </div>
         </header>
-
-        <div class="category-bar">
-            <button class="category-btn active" data-category="all">All</button>
-            <button class="category-btn" data-category="v1">Version 1.0</button>
-            <button class="category-btn" data-category="v2">Version 2.0</button>
-        </div>
-
         <div class="content-area">
-            <main class="content">
-                <article class="week-logs category-v1" data-full="Version 1.0 Release - Initial Features">
-                    <div class="week-title">Version 1.0 Release</div>
-                    <div class="week-date">15/11/2025</div>
-
-                    <div class="week-text">
-                        <span class="change-added">+ Added basic HTML structure with dark theme</span><br>
-                        <span class="change-added">+ Implemented modal for viewing full logs</span><br>
-                        <span class="change-added">+ Added search functionality</span><br>
-                        <span class="change-added">+ Created export feature for logs</span><br>
-                        <span class="change-added">+ Basic responsive design</span>
-                    </div>
-                </article>
-
-                <article class="week-logs category-v2" data-full="Version 2.0 Release - Major Improvements">
-                    <div class="week-title">Version 2.0 Release</div>
-                    <div class="week-date">20/12/2025</div>
-
-                    <div class="week-text">
-                        <span class="change-added">+ Semantic HTML elements (header, main, article, footer)</span><br>
-                        <span class="change-added">+ Settings modal for better UI</span><br>
-                        <span class="change-improved">* Improved scrollbar styling</span><br>
-                        <span class="change-improved">* Enhanced mobile responsiveness</span><br>
-                        <span class="change-added">+ Category-based log organization</span><br>
-                        <span class="change-added">+ Light/dark mode toggle</span><br>
-                        <span class="change-removed">- Removed rounded corners for sharper look</span>
-                    </div>
-                </article>
-            </main>
-
+            <div class="content">
+                <div class="line">
+                    <span class="prompt">miraii@terminal</span>
+                    <span class="accent">~/</span>
+                    <span class="input-container">
+                        <span class="input" contenteditable="true" autofocus></span>
+                        <span class="cursor"></span>
+                        <span class="char-count">0/45</span>
+                    </span>
+                </div>
+            </div>
         </div>
-
         <footer class="footer">
-            <span>Version 2.0</span>
+            <span>Version 3.5</span>
             <span>ID: X0X0</span>
         </footer>
-    </main>
-
-    <div class="modal" id="weekly-modal">
+    </div>
+    <div class="modal" id="credits-modal">
         <div class="modal-window">
             <div class="modal-topbar">
-                <div class="modal-nav">
-                    <button class="close-button" id="prev-log">&lt;</button>
-                    <button class="close-button" id="next-log">&gt;</button>
+                <div class="modal-title"># Credits</div>
+                <div class="buttons">
+                    <button class="button" id="close-modal">x</button>
                 </div>
-                <div class="modal-title" id="modal-title"># Weekly Log</div>
-                <div class="close-button" id="close-modal">x</div>
             </div>
-
-            <div class="modal-content" id="modal-content"></div>
+            <div class="modal-content">
+                <p>Made by Miraii <span class="user-id">(@844900332303024128)</span></p>
+                <a href="#" class="link-container" target="_blank" rel="noopener noreferrer">
+                    <img src="https://icon.icepanel.io/Technology/png-shadow-512/GitHub.png" class="github-logo"
+                        alt="GitHub">
+                    <div class="link-text-wrapper">
+                        <span class="link-text">Github</span>
+                        <span class="link-subtext">Github Pages</span>
+                    </div>
+                </a>
+                <div class="credits-section">
+                    <div class="credits-section-title">Libraries & Resources</div>
+                    <div class="link-container" id="lucide-modal-button" style="cursor: pointer;">
+                        <img src="https://lucide.dev/logo.dark.svg" class="lucide-logo" id="lucide-logo" alt="Lucide">
+                        <div class="link-text-wrapper">
+                            <span class="link-text">Lucide</span>
+                            <span class="link-subtext">Icon Library</span>
+                        </div>
+                    </div>
+                    <a href="https://guns.lol/fr" class="link-container" target="_blank" rel="noopener noreferrer">
+                        <img src="https://assets.guns.lol/guns_logo_no_background_cropped_xmas.png" class="guns-logo"
+                            alt="Guns.lol">
+                        <div class="link-text-wrapper">
+                            <span class="link-text">Guns.lol</span>
+                            <span class="link-subtext">Website</span>
+                        </div>
+                    </a>
+                    <a href="https://thequoteshub.com" class="link-container" target="_blank" rel="noopener noreferrer">
+                        <img src="https://thequoteshub.com/favicon.ico" class="guns-logo" alt="The Quotes Hub">
+                        <div class="link-text-wrapper">
+                            <span class="link-text">The Quotes Hub</span>
+                            <span class="link-subtext">Quote API</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
-
-    <div class="modal" id="settings-modal">
+    <div class="modal" id="lucide-modal">
         <div class="modal-window">
             <div class="modal-topbar">
-                <div class="modal-title"># Settings</div>
-                <div class="close-button" id="close-settings">
-                    <i data-lucide="x" class="icon-close"></i>
+                <div class="modal-title"># Lucide</div>
+                <div class="buttons">
+                    <button class="button" id="close-lucide-modal">x</button>
                 </div>
             </div>
-
+            <div class="modal-content">
+                <p>Lucide is a beautiful & consistent icon toolkit made by the community.</p>
+                <a href="https://lucide.dev" class="link-container" target="_blank" rel="noopener noreferrer">
+                    <img src="https://lucide.dev/logo.dark.svg" class="lucide-logo" id="lucide-modal-logo" alt="Lucide">
+                    <div class="link-text-wrapper">
+                        <span class="link-text">Lucide Website</span>
+                        <span class="link-subtext">Official Website</span>
+                    </div>
+                </a>
+                <a href="https://github.com/lucide-icons" class="link-container" target="_blank"
+                    rel="noopener noreferrer">
+                    <img src="https://icon.icepanel.io/Technology/png-shadow-512/GitHub.png" class="github-logo"
+                        alt="GitHub">
+                    <div class="link-text-wrapper">
+                        <span class="link-text">Lucide GitHub</span>
+                        <span class="link-subtext">Source Code</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="help-modal">
+        <div class="modal-window">
+            <div class="modal-topbar">
+                <div class="modal-title"># Help</div>
+                <div class="buttons">
+                    <button class="button" id="close-help">x</button>
+                </div>
+            </div>
             <div class="modal-content">
                 <div class="settings-tabs">
-                    <button class="tab-btn active" data-tab="general">General</button>
-                    <button class="tab-btn" data-tab="export">Export</button>
-                    <button class="tab-btn" data-tab="appearance">Appearance</button>
+                    <button class="tab-btn active" data-tab="basic">Basic</button>
+                    <button class="tab-btn" data-tab="fun">Fun</button>
                 </div>
-
-                <div class="tab-content" id="general-tab">
-                    <div class="setting-item">
-                        <button class="setting-btn" id="sort-date">
-                            <i data-lucide="calendar" class="setting-icon"></i>
-                            <span>Sort by Date</span>
-                        </button>
-                        <p class="setting-desc">Reorder logs from newest to oldest</p>
+                <div class="search-container">
+                    <input type="text" id="help-search" class="help-search" placeholder="Search commands...">
+                </div>
+                <div class="tab-content" id="basic-tab">
+                    <div class="cmd-item" data-cmd="help">
+                        <div class="cmd-name">help</div>
+                        <div class="cmd-desc">Show this help menu</div>
+                        <div class="cmd-detail">Opens the help modal displaying all available commands. You can browse
+                            commands by category and click on any command to see detailed information.</div>
+                    </div>
+                    <div class="cmd-item" data-cmd="clear">
+                        <div class="cmd-name">clear</div>
+                        <div class="cmd-desc">Clear the terminal screen</div>
+                        <div class="cmd-detail">Removes all previous command outputs from the terminal, leaving only the
+                            current input line. This helps keep the terminal clean and organized.</div>
+                    </div>
+                    <div class="cmd-item" data-cmd="echo">
+                        <div class="cmd-name">echo &lt;text&gt;</div>
+                        <div class="cmd-desc">Display the given text</div>
+                        <div class="cmd-detail">Prints the text you provide after the command. Example: "echo Hello
+                            World" will display "Hello World" in the terminal.</div>
+                    </div>
+                    <div class="cmd-item" data-cmd="date">
+                        <div class="cmd-name">date</div>
+                        <div class="cmd-desc">Show current date and time</div>
+                        <div class="cmd-detail">Displays the current date and time in a readable format. The output
+                            includes the full date, time, and timezone information.</div>
+                    </div>
+                    <div class="cmd-item" data-cmd="whoami">
+                        <div class="cmd-name">whoami</div>
+                        <div class="cmd-desc">Display current user information</div>
+                        <div class="cmd-detail">Shows the username of the current user. In this terminal, it displays
+                            "miraii" as the current user.</div>
+                    </div>
+                    <div class="cmd-item" data-cmd="pwd">
+                        <div class="cmd-name">pwd</div>
+                        <div class="cmd-desc">Print working directory</div>
+                        <div class="cmd-detail">Displays the current working directory path. In this terminal, it shows
+                            "/home/miraii" as the current directory.</div>
                     </div>
                 </div>
-
-                <div class="tab-content hidden" id="export-tab">
-                    <div class="setting-item">
-                        <button class="setting-btn" id="export-txt">
-                            <i data-lucide="file-text" class="setting-icon"></i>
-                            <span>Export as TXT</span>
-                        </button>
-                        <p class="setting-desc">Download logs as plain text file</p>
+                <div class="tab-content hidden" id="fun-tab">
+                    <div class="cmd-item" data-cmd="matrix">
+                        <div class="cmd-name">matrix</div>
+                        <div class="cmd-desc">Activate matrix effect (toggle)</div>
+                        <div class="cmd-detail">Toggles a Matrix-style falling character animation in the background.
+                            Run the command again to turn it off. The effect uses Japanese characters and numbers.</div>
                     </div>
-                    <div class="setting-item">
-                        <button class="setting-btn" id="export-json">
-                            <i data-lucide="file-json" class="setting-icon"></i>
-                            <span>Export as JSON</span>
-                        </button>
-                        <p class="setting-desc">Download logs as JSON data</p>
+                    <div class="cmd-item" data-cmd="quote">
+                        <div class="cmd-name">quote</div>
+                        <div class="cmd-desc">Display a random inspirational quote</div>
+                        <div class="cmd-detail">Shows a random inspirational quote to brighten your day. Each time you
+                            run this command, you'll get a different quote from The Quotes Hub API.</div>
                     </div>
-                </div>
-
-                <div class="tab-content hidden" id="appearance-tab">
-                    <div class="setting-item">
-                        <button class="setting-btn" id="toggle-theme">
-                            <i data-lucide="sun" class="setting-icon"></i>
-                            <span id="theme-text">Light Mode</span>
-                        </button>
-                        <p class="setting-desc">Switch between light and dark themes</p>
+                    <div class="cmd-item" data-cmd="gravity">
+                        <div class="cmd-name">gravity</div>
+                        <div class="cmd-desc">Activate gravity mode (toggle)</div>
+                        <div class="cmd-detail">Toggles gravity mode where all elements fall and become draggable. Click
+                            and drag elements to move them around. Run the command again to turn it off.</div>
+                    </div>
+                    <div class="cmd-item" data-cmd="3d">
+                        <div class="cmd-name">3d</div>
+                        <div class="cmd-desc">Spawn an interactive 3D shapes viewer</div>
+                        <div class="cmd-detail">Creates an interactive 3D shapes viewer with multiple shapes (Cube,
+                            Sphere, Torus, Octahedron, Icosahedron, Cone, Cylinder, Tetrahedron, Dodecahedron,
+                            TorusKnot, Ring, Plane, Tube, Lathe). Switch between shapes using the tabs, rotate
+                            by dragging, and use buttons to toggle auto-rotation and close the viewer. Run the command
+                            again to close it.</div>
+                    </div>
+                    <div class="cmd-item" data-cmd="sort">
+                        <div class="cmd-name">sort</div>
+                        <div class="cmd-desc">Open algorithm sorting visualizer</div>
+                        <div class="cmd-detail">Opens an interactive sorting algorithm visualizer. Choose from multiple
+                            algorithms (Bubble, Quick, Merge, Insertion, Selection), adjust array size (5-50), set speed
+                            (Slow, Medium, Fast), and watch the sorting process in real-time with comparison counts.
+                            Click Start to begin sorting and Reset to generate a new random array.</div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
+    <div class="modal" id="theme-modal">
+        <div class="modal-window">
+            <div class="modal-topbar">
+                <div class="modal-title"># Themes</div>
+                <div class="buttons">
+                    <button class="button" id="close-theme-modal">x</button>
+                </div>
+            </div>
+            <div class="modal-content">
+                <div class="theme-option" data-theme="dark">
+                    <span class="theme-name">Dark</span>
+                    <div class="theme-preview dark"></div>
+                </div>
+                <div class="theme-option" data-theme="white">
+                    <span class="theme-name">White</span>
+                    <div class="theme-preview white"></div>
+                </div>
+                <div class="theme-option" data-theme="mint">
+                    <span class="theme-name">Mint</span>
+                    <div class="theme-preview mint"></div>
+                </div>
+            </div>
+        </div>
+    </div>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>
-        const week_logs = document.querySelectorAll(".week-logs");
-        const modal = document.getElementById("weekly-modal");
-        const modal_title = document.getElementById("modal-title");
-        const modal_content = document.getElementById("modal-content");
-        const close_modal = document.getElementById("close-modal");
-        const search_input = document.getElementById("search-input");
-        const sort_date_btn = document.getElementById("sort-date");
-        const export_btn = document.getElementById("export-txt");
-        const export_json_btn = document.getElementById("export-json");
-        const toggle_theme_btn = document.getElementById("toggle-theme");
-        const tab_btns = document.querySelectorAll(".tab-btn");
-        const tab_contents = document.querySelectorAll(".tab-content");
-        const prev_log_btn = document.getElementById("prev-log");
-        const next_log_btn = document.getElementById("next-log");
-        const settings_btn = document.getElementById("settings-btn");
-        const settings_modal = document.getElementById("settings-modal");
-        const close_settings = document.getElementById("close-settings");
-        const category_btns = document.querySelectorAll(".category-btn");
+        (async () => {
+            'use strict';
 
-        // Category filtering
-        category_btns.forEach(btn => {
-            btn.addEventListener("click", () => {
-                const category = btn.dataset.category;
-                category_btns.forEach(b => b.classList.remove("active"));
-                btn.classList.add("active");
-
-                week_logs.forEach(log => {
-                    if (category === "all") {
-                        log.style.display = "block";
+            // Wait for DOM and Lucide to be ready
+            const waitForLucide = () => {
+                return new Promise((resolve) => {
+                    if (typeof lucide !== 'undefined' && lucide.createIcons) {
+                        resolve();
                     } else {
-                        log.classList.contains(`category-${category}`) ? log.style.display = "block" : log.style.display = "none";
+                        const checkInterval = setInterval(() => {
+                            if (typeof lucide !== 'undefined' && lucide.createIcons) {
+                                clearInterval(checkInterval);
+                                resolve();
+                            }
+                        }, 10);
                     }
                 });
-            });
-        });
+            };
 
-        let current_log_index = -1;
-        let is_light_mode = false;
+            try {
+                await waitForLucide();
 
-        // Modal functionality
-        week_logs.forEach((log, index) => {
-            log.addEventListener("click", () => {
-                current_log_index = index;
-                show_log_in_modal(index);
-            });
-        });
+                const input = document.querySelector(".input");
+                const char_count = document.querySelector(".char-count");
+                const content = document.querySelector(".content");
+                const root = document.documentElement;
+                const max_chars = 45;
 
-        function show_log_in_modal(index) {
-            const log = week_logs[index];
-            const title = log.querySelector(".week-title").textContent;
-            const full_text = log.dataset.full || log.querySelector(".week-text").textContent;
-
-            modal_title.textContent = `# ${title}`;
-            modal_content.textContent = full_text;
-            modal.style.display = "flex";
-
-            update_nav_buttons();
-        }
-
-        function update_nav_buttons() {
-            prev_log_btn.disabled = current_log_index <= 0;
-            next_log_btn.disabled = current_log_index >= week_logs.length - 1;
-        }
-
-        close_modal.addEventListener("click", () => modal.style.display = "none");
-
-        modal.addEventListener("click", (e) => {
-            if (e.target === modal) {
-                modal.style.display = "none";
-            }
-        });
-
-        // Settings modal
-        settings_btn.addEventListener("click", () => {
-            settings_modal.style.display = "flex";
-        });
-
-        close_settings.addEventListener("click", () => {
-            settings_modal.style.display = "none";
-        });
-
-        settings_modal.addEventListener("click", (e) => {
-            if (e.target === settings_modal) {
-                settings_modal.style.display = "none";
-            }
-        });
-
-        // Tab switching
-        tab_btns.forEach(btn => {
-            btn.addEventListener("click", () => {
-                tab_btns.forEach(b => b.classList.remove("active"));
-                tab_contents.forEach(c => c.classList.add("hidden"));
-                btn.classList.add("active");
-                document.getElementById(btn.dataset.tab + "-tab").classList.remove("hidden");
-            });
-        });
-
-        // Keyboard shortcuts
-        document.addEventListener("keydown", (e) => {
-            if (modal.style.display === "flex") {
-                if (e.key === "Escape") {
-                    modal.style.display = "none";
-                } else if (e.key === "ArrowLeft" && !prev_log_btn.disabled) {
-                    current_log_index--;
-                    show_log_in_modal(current_log_index);
-                } else if (e.key === "ArrowRight" && !next_log_btn.disabled) {
-                    current_log_index++;
-                    show_log_in_modal(current_log_index);
+                if (!input || !char_count || !content) {
+                    throw new Error("Required DOM elements not found");
                 }
+
+                const commands = {
+                    help: "Available Commands: help, matrix, clear, echo <text>, date, quote, gravity, 3d, sort, whoami, pwd.",
+                    clear: "Clear the terminal screen.",
+                    echo: "Echo the given text.",
+                    date: "Display current date and time.",
+                    quote: "Display a random inspirational quote.",
+                    gravity: "Activate gravity mode (toggle).",
+                    "3d": "Spawn an interactive 3D shapes viewer with multiple shapes you can rotate and play with.",
+                    "sort": "Open an algorithm sorting visualizer with multiple sorting algorithms and options.",
+                    "whoami": "Display the current user information.",
+                    "pwd": "Print the current working directory."
+                };
+
+                let no_matrix = null;
+                let no_gravity = null;
+                let matrix_audio = null;
+                let cube_container = null;
+                let sorter_container = null;
+                let sorter_animation_id = null;
+
+                function place_caret_end(element) {
+                    try {
+                        if (!element) return;
+                        const range = document.createRange();
+                        const select = window.getSelection();
+                        if (!select) return;
+                        range.selectNodeContents(element);
+                        range.collapse(false);
+                        select.removeAllRanges();
+                        select.addRange(range);
+                    } catch (error) {
+                        console.error("Error placing caret:", error);
+                    }
+                }
+
+                function matrix() {
+                    try {
+                        // Play matrix sound
+                        if (!matrix_audio) {
+                            matrix_audio = new Audio("https://raw.githubusercontent.com/jxl-cpl/jxl-cpl.github.io/refs/heads/main/MS.mp3");
+                            matrix_audio.loop = true;
+                            matrix_audio.volume = 0.3;
+                            matrix_audio.play().catch(err => {
+                                console.log("Audio autoplay prevented:", err);
+                            });
+                        }
+
+                        const canvas = document.createElement("canvas");
+                        const context = canvas.getContext("2d");
+                        if (!context) {
+                            throw new Error("Canvas context not available");
+                        }
+
+                        canvas.id = "matrix_background";
+                        document.body.appendChild(canvas);
+                        document.body.classList.add("matrix-active");
+
+                        canvas.style.position = "fixed";
+                        canvas.style.top = "0";
+                        canvas.style.left = "0";
+                        canvas.style.width = "100%";
+                        canvas.style.height = "100%";
+                        canvas.style.zIndex = "-9999";
+                        canvas.style.pointerEvents = "none";
+
+                        const resizeCanvas = () => {
+                            canvas.width = window.innerWidth;
+                            canvas.height = window.innerHeight;
+                        };
+                        resizeCanvas();
+
+                        const letters = "ミレイミレイミレイMIRAII010101".split("");
+                        const font_size = 14;
+                        const columns = Math.floor(canvas.width / font_size);
+                        const drops = Array(columns).fill(1);
+
+                        function draw() {
+                            try {
+                                const current_theme = root.getAttribute("data-theme") || "dark";
+                                const is_light_theme = current_theme === "light" || current_theme === "white";
+                                const bg_color = is_light_theme ? "rgba(245, 245, 245, 0.05)" : (current_theme === "mint" ? "rgba(13, 27, 26, 0.05)" : "rgba(26, 19, 22, 0.05)");
+                                const text_color = is_light_theme ? "#d97706" : (current_theme === "mint" ? "#4dd0a0" : "#e5b97f");
+
+                                context.fillStyle = bg_color;
+                                context.fillRect(0, 0, canvas.width, canvas.height);
+                                context.fillStyle = text_color;
+                                context.font = `${font_size}px Inter`;
+
+                                for (let i = 0; i < drops.length; i++) {
+                                    const text = letters[Math.floor(Math.random() * letters.length)];
+                                    context.fillText(text, i * font_size, drops[i] * font_size);
+                                    if (drops[i] * font_size > canvas.height && Math.random() > 0.975) {
+                                        drops[i] = 0;
+                                    }
+                                    drops[i]++;
+                                }
+                            } catch (error) {
+                                console.error("Error drawing matrix:", error);
+                            }
+                        }
+
+                        const interval = setInterval(draw, 40);
+                        const resizeHandler = () => resizeCanvas();
+                        window.addEventListener("resize", resizeHandler);
+
+                        return () => {
+                            try {
+                                clearInterval(interval);
+                                window.removeEventListener("resize", resizeHandler);
+                                canvas.remove();
+                                document.body.classList.remove("matrix-active");
+                                if (matrix_audio) {
+                                    matrix_audio.pause();
+                                    matrix_audio.currentTime = 0;
+                                    matrix_audio = null;
+                                }
+                            } catch (error) {
+                                console.error("Error cleaning up matrix:", error);
+                            }
+                        };
+                    } catch (error) {
+                        console.error("Error initializing matrix:", error);
+                        return () => { };
+                    }
+                }
+
+                function initGravity() {
+                    try {
+                        document.body.classList.add("gravity-active");
+                        const gravity_elements = [];
+                        let is_dragging = false;
+                        let drag_element = null;
+                        const drag_offset = { x: 0, y: 0 };
+
+                        // Get all interactive elements - include nested elements too
+                        const allElements = document.querySelectorAll("body > *:not(script):not(canvas)");
+                        const excludedIds = ["matrix_background", "cube-container", "sorter-container"];
+                        allElements.forEach((el, index) => {
+                            if (excludedIds.includes(el.id)) return;
+                            if (el.closest("#cube-container") || el.closest("#sorter-container")) return;
+
+                            const rect = el.getBoundingClientRect();
+                            const elementData = {
+                                element: el,
+                                x: rect.left,
+                                y: rect.top,
+                                vx: (Math.random() - 0.5) * 2,
+                                vy: 0,
+                                mass: 1,
+                                isDragging: false,
+                                dragStartX: 0,
+                                dragStartY: 0
+                            };
+
+                            el.classList.add("gravity-element");
+                            el.style.position = "fixed";
+                            el.style.left = rect.left + "px";
+                            el.style.top = rect.top + "px";
+                            el.style.transform = "translate(0, 0)";
+
+                            gravity_elements.push(elementData);
+
+                            // Make draggable - but allow inputs, selects, buttons to work normally
+                            el.addEventListener("mousedown", (e) => {
+                                // Don't interfere with interactive elements
+                                if (e.target.tagName === "INPUT" ||
+                                    e.target.tagName === "SELECT" ||
+                                    e.target.tagName === "BUTTON" ||
+                                    e.target.tagName === "TEXTAREA" ||
+                                    e.target.closest("button") ||
+                                    e.target.closest("input") ||
+                                    e.target.closest("select")) {
+                                    return;
+                                }
+                                if (e.target === el || el.contains(e.target)) {
+                                    elementData.isDragging = true;
+                                    is_dragging = true;
+                                    drag_element = elementData;
+                                    const rect = el.getBoundingClientRect();
+                                    drag_offset.x = e.clientX - rect.left;
+                                    drag_offset.y = e.clientY - rect.top;
+                                    e.preventDefault();
+                                }
+                            });
+                        });
+
+                        // Mouse move handler
+                        const mouseMoveHandler = (e) => {
+                            if (is_dragging && drag_element) {
+                                drag_element.x = e.clientX - drag_offset.x;
+                                drag_element.y = e.clientY - drag_offset.y;
+                                drag_element.vx = 0;
+                                drag_element.vy = 0;
+                                drag_element.element.style.left = drag_element.x + "px";
+                                drag_element.element.style.top = drag_element.y + "px";
+                            }
+                        };
+
+                        // Mouse up handler
+                        const mouseUpHandler = () => {
+                            if (drag_element) {
+                                drag_element.isDragging = false;
+                            }
+                            is_dragging = false;
+                            drag_element = null;
+                        };
+
+                        document.addEventListener("mousemove", mouseMoveHandler);
+                        document.addEventListener("mouseup", mouseUpHandler);
+
+                        // Gravity physics
+                        const GRAVITY = 0.5;
+                        const FRICTION = 0.98;
+                        const BOUNCE = 0.7;
+
+                        const gravity_interval = setInterval(() => {
+                            gravity_elements.forEach((elData) => {
+                                if (elData.isDragging) return;
+
+                                // Apply gravity
+                                elData.vy += GRAVITY;
+
+                                // Apply velocity
+                                elData.x += elData.vx;
+                                elData.y += elData.vy;
+
+                                // Bounce off walls
+                                if (elData.x < 0) {
+                                    elData.x = 0;
+                                    elData.vx *= -BOUNCE;
+                                }
+                                if (elData.x + elData.element.offsetWidth > window.innerWidth) {
+                                    elData.x = window.innerWidth - elData.element.offsetWidth;
+                                    elData.vx *= -BOUNCE;
+                                }
+
+                                // Bounce off floor
+                                if (elData.y + elData.element.offsetHeight > window.innerHeight) {
+                                    elData.y = window.innerHeight - elData.element.offsetHeight;
+                                    elData.vy *= -BOUNCE;
+                                    elData.vx *= FRICTION;
+                                }
+
+                                // Apply position
+                                elData.element.style.left = elData.x + "px";
+                                elData.element.style.top = elData.y + "px";
+                            });
+                        }, 16);
+
+                        return () => {
+                            try {
+                                if (gravity_interval) {
+                                    clearInterval(gravity_interval);
+                                }
+                                document.removeEventListener("mousemove", mouseMoveHandler);
+                                document.removeEventListener("mouseup", mouseUpHandler);
+                                document.body.classList.remove("gravity-active");
+                                gravity_elements.forEach((elData) => {
+                                    elData.element.classList.remove("gravity-element");
+                                    elData.element.style.position = "";
+                                    elData.element.style.left = "";
+                                    elData.element.style.top = "";
+                                    elData.element.style.transform = "";
+                                });
+                            } catch (error) {
+                                console.error("Error cleaning up gravity:", error);
+                            }
+                        };
+                    } catch (error) {
+                        console.error("Error initializing gravity:", error);
+                        return () => { };
+                    }
+                }
+
+                function create3DCube() {
+                    try {
+                        if (cube_container) {
+                            cube_container.remove();
+                            cube_container = null;
+                            return () => { };
+                        }
+
+                        cube_container = document.createElement("div");
+                        cube_container.id = "cube-container";
+                        document.body.appendChild(cube_container);
+
+                        const scene = new THREE.Scene();
+                        const camera = new THREE.PerspectiveCamera(75, 400 / 400, 0.1, 1000);
+                        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+                        renderer.setSize(400, 400);
+                        renderer.setClearColor(0x000000, 0);
+                        cube_container.appendChild(renderer.domElement);
+
+                        // Add ambient and point light once to the scene
+                        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+                        scene.add(ambientLight);
+                        const pointLight = new THREE.PointLight(0xffffff, 1, 100);
+                        pointLight.position.set(5, 5, 5);
+                        scene.add(pointLight);
+
+                        let currentShapeGroup = null;
+                        let isDragging = false;
+                        let previousMousePosition = { x: 0, y: 0 };
+                        let rotationSpeed = { x: 0.01, y: 0.01 };
+                        let autoRotate = true;
+
+                        const shapes = {
+                            cube: () => {
+                                const group = new THREE.Group();
+                                const geometry = new THREE.BoxGeometry(2, 2, 2);
+                                const edges = new THREE.EdgesGeometry(geometry);
+                                const line = new THREE.LineSegments(
+                                    edges,
+                                    new THREE.LineBasicMaterial({ color: 0xe5b97f })
+                                );
+                                group.add(line);
+
+                                const colors = [0xff6b6b, 0x4ecdc4, 0x45b7d1, 0xf9ca24, 0xf0932b, 0xeb4d4b];
+                                for (let i = 0; i < 6; i++) {
+                                    const faceGeometry = new THREE.PlaneGeometry(2, 2);
+                                    const faceMaterial = new THREE.MeshBasicMaterial({
+                                        color: colors[i],
+                                        side: THREE.DoubleSide,
+                                        transparent: true,
+                                        opacity: 0.7
+                                    });
+                                    const face = new THREE.Mesh(faceGeometry, faceMaterial);
+                                    const positions = [
+                                        [0, 0, 1], [0, 0, -1],
+                                        [0, 1, 0], [0, -1, 0],
+                                        [1, 0, 0], [-1, 0, 0]
+                                    ];
+                                    face.position.set(...positions[i]);
+                                    if (i < 2) {
+                                        face.rotation.y = i === 0 ? 0 : Math.PI;
+                                    } else if (i < 4) {
+                                        face.rotation.x = i === 2 ? -Math.PI / 2 : Math.PI / 2;
+                                    } else {
+                                        face.rotation.y = i === 4 ? Math.PI / 2 : -Math.PI / 2;
+                                    }
+                                    group.add(face);
+                                }
+                                return group;
+                            },
+                            sphere: () => {
+                                const group = new THREE.Group();
+                                const geometry = new THREE.SphereGeometry(1.5, 32, 32);
+                                const material = new THREE.MeshPhongMaterial({
+                                    color: 0x4ecdc4,
+                                    transparent: true,
+                                    opacity: 0.8,
+                                    wireframe: false
+                                });
+                                const mesh = new THREE.Mesh(geometry, material);
+                                group.add(mesh);
+
+                                const wireframe = new THREE.WireframeGeometry(geometry);
+                                const line = new THREE.LineSegments(
+                                    wireframe,
+                                    new THREE.LineBasicMaterial({ color: 0xe5b97f })
+                                );
+                                group.add(line);
+                                return group;
+                            },
+                            torus: () => {
+                                const group = new THREE.Group();
+                                const geometry = new THREE.TorusGeometry(1, 0.4, 16, 100);
+                                const material = new THREE.MeshPhongMaterial({
+                                    color: 0xf9ca24,
+                                    transparent: true,
+                                    opacity: 0.8
+                                });
+                                const mesh = new THREE.Mesh(geometry, material);
+                                group.add(mesh);
+
+                                const edges = new THREE.EdgesGeometry(geometry);
+                                const line = new THREE.LineSegments(
+                                    edges,
+                                    new THREE.LineBasicMaterial({ color: 0xe5b97f })
+                                );
+                                group.add(line);
+                                return group;
+                            },
+                            octahedron: () => {
+                                const group = new THREE.Group();
+                                const geometry = new THREE.OctahedronGeometry(1.5);
+                                const material = new THREE.MeshPhongMaterial({
+                                    color: 0xff6b6b,
+                                    transparent: true,
+                                    opacity: 0.8
+                                });
+                                const mesh = new THREE.Mesh(geometry, material);
+                                group.add(mesh);
+
+                                const edges = new THREE.EdgesGeometry(geometry);
+                                const line = new THREE.LineSegments(
+                                    edges,
+                                    new THREE.LineBasicMaterial({ color: 0xe5b97f })
+                                );
+                                group.add(line);
+                                return group;
+                            },
+                            icosahedron: () => {
+                                const group = new THREE.Group();
+                                const geometry = new THREE.IcosahedronGeometry(1.3);
+                                const material = new THREE.MeshPhongMaterial({
+                                    color: 0x45b7d1,
+                                    transparent: true,
+                                    opacity: 0.8
+                                });
+                                const mesh = new THREE.Mesh(geometry, material);
+                                group.add(mesh);
+
+                                const edges = new THREE.EdgesGeometry(geometry);
+                                const line = new THREE.LineSegments(
+                                    edges,
+                                    new THREE.LineBasicMaterial({ color: 0xe5b97f })
+                                );
+                                group.add(line);
+                                return group;
+                            },
+                            cone: () => {
+                                const group = new THREE.Group();
+                                const geometry = new THREE.ConeGeometry(1.2, 2, 32);
+                                const material = new THREE.MeshPhongMaterial({
+                                    color: 0xf0932b,
+                                    transparent: true,
+                                    opacity: 0.8
+                                });
+                                const mesh = new THREE.Mesh(geometry, material);
+                                group.add(mesh);
+
+                                const edges = new THREE.EdgesGeometry(geometry);
+                                const line = new THREE.LineSegments(
+                                    edges,
+                                    new THREE.LineBasicMaterial({ color: 0xe5b97f })
+                                );
+                                group.add(line);
+                                return group;
+                            },
+                            cylinder: () => {
+                                const group = new THREE.Group();
+                                const geometry = new THREE.CylinderGeometry(1, 1, 2, 32);
+                                const material = new THREE.MeshPhongMaterial({
+                                    color: 0x9b59b6,
+                                    transparent: true,
+                                    opacity: 0.8
+                                });
+                                const mesh = new THREE.Mesh(geometry, material);
+                                group.add(mesh);
+
+                                const edges = new THREE.EdgesGeometry(geometry);
+                                const line = new THREE.LineSegments(
+                                    edges,
+                                    new THREE.LineBasicMaterial({ color: 0xe5b97f })
+                                );
+                                group.add(line);
+                                return group;
+                            },
+                            tetrahedron: () => {
+                                const group = new THREE.Group();
+                                const geometry = new THREE.TetrahedronGeometry(1.5);
+                                const material = new THREE.MeshPhongMaterial({
+                                    color: 0x1abc9c,
+                                    transparent: true,
+                                    opacity: 0.8
+                                });
+                                const mesh = new THREE.Mesh(geometry, material);
+                                group.add(mesh);
+
+                                const edges = new THREE.EdgesGeometry(geometry);
+                                const line = new THREE.LineSegments(
+                                    edges,
+                                    new THREE.LineBasicMaterial({ color: 0xe5b97f })
+                                );
+                                group.add(line);
+                                return group;
+                            },
+                            dodecahedron: () => {
+                                const group = new THREE.Group();
+                                const geometry = new THREE.DodecahedronGeometry(1.2);
+                                const material = new THREE.MeshPhongMaterial({
+                                    color: 0xe74c3c,
+                                    transparent: true,
+                                    opacity: 0.8
+                                });
+                                const mesh = new THREE.Mesh(geometry, material);
+                                group.add(mesh);
+
+                                const edges = new THREE.EdgesGeometry(geometry);
+                                const line = new THREE.LineSegments(
+                                    edges,
+                                    new THREE.LineBasicMaterial({ color: 0xe5b97f })
+                                );
+                                group.add(line);
+                                return group;
+                            },
+                            torusKnot: () => {
+                                const group = new THREE.Group();
+                                const geometry = new THREE.TorusKnotGeometry(0.8, 0.3, 100, 16);
+                                const material = new THREE.MeshPhongMaterial({
+                                    color: 0x3498db,
+                                    transparent: true,
+                                    opacity: 0.8
+                                });
+                                const mesh = new THREE.Mesh(geometry, material);
+                                group.add(mesh);
+
+                                const edges = new THREE.EdgesGeometry(geometry);
+                                const line = new THREE.LineSegments(
+                                    edges,
+                                    new THREE.LineBasicMaterial({ color: 0xe5b97f })
+                                );
+                                group.add(line);
+                                return group;
+                            },
+                            ring: () => {
+                                const group = new THREE.Group();
+                                const geometry = new THREE.RingGeometry(0.5, 1.5, 32);
+                                const material = new THREE.MeshPhongMaterial({
+                                    color: 0xf39c12,
+                                    transparent: true,
+                                    opacity: 0.8,
+                                    side: THREE.DoubleSide
+                                });
+                                const mesh = new THREE.Mesh(geometry, material);
+                                mesh.rotation.x = Math.PI / 2;
+                                group.add(mesh);
+
+                                const edges = new THREE.EdgesGeometry(geometry);
+                                const line = new THREE.LineSegments(
+                                    edges,
+                                    new THREE.LineBasicMaterial({ color: 0xe5b97f })
+                                );
+                                line.rotation.x = Math.PI / 2;
+                                group.add(line);
+                                return group;
+                            },
+                            plane: () => {
+                                const group = new THREE.Group();
+                                const geometry = new THREE.PlaneGeometry(2, 2, 10, 10);
+                                const material = new THREE.MeshPhongMaterial({
+                                    color: 0x16a085,
+                                    transparent: true,
+                                    opacity: 0.8,
+                                    side: THREE.DoubleSide,
+                                    wireframe: true
+                                });
+                                const mesh = new THREE.Mesh(geometry, material);
+                                mesh.rotation.x = -Math.PI / 2;
+                                group.add(mesh);
+
+                                const solidMaterial = new THREE.MeshPhongMaterial({
+                                    color: 0x16a085,
+                                    transparent: true,
+                                    opacity: 0.3,
+                                    side: THREE.DoubleSide
+                                });
+                                const solidMesh = new THREE.Mesh(geometry, solidMaterial);
+                                solidMesh.rotation.x = -Math.PI / 2;
+                                group.add(solidMesh);
+                                return group;
+                            },
+                            tube: () => {
+                                const group = new THREE.Group();
+                                const curve = new THREE.QuadraticBezierCurve3(
+                                    new THREE.Vector3(-1, 0, 0),
+                                    new THREE.Vector3(0, 1, 0),
+                                    new THREE.Vector3(1, 0, 0)
+                                );
+                                const geometry = new THREE.TubeGeometry(curve, 20, 0.3, 8, false);
+                                const material = new THREE.MeshPhongMaterial({
+                                    color: 0xc0392b,
+                                    transparent: true,
+                                    opacity: 0.8
+                                });
+                                const mesh = new THREE.Mesh(geometry, material);
+                                group.add(mesh);
+
+                                const edges = new THREE.EdgesGeometry(geometry);
+                                const line = new THREE.LineSegments(
+                                    edges,
+                                    new THREE.LineBasicMaterial({ color: 0xe5b97f })
+                                );
+                                group.add(line);
+                                return group;
+                            },
+                            lathe: () => {
+                                const group = new THREE.Group();
+                                const points = [];
+                                for (let i = 0; i < 10; i++) {
+                                    points.push(new THREE.Vector2(Math.sin(i * 0.2) * 0.5 + 0.5, (i - 5) * 0.2));
+                                }
+                                const geometry = new THREE.LatheGeometry(points, 20);
+                                const material = new THREE.MeshPhongMaterial({
+                                    color: 0x8e44ad,
+                                    transparent: true,
+                                    opacity: 0.8
+                                });
+                                const mesh = new THREE.Mesh(geometry, material);
+                                group.add(mesh);
+
+                                const edges = new THREE.EdgesGeometry(geometry);
+                                const line = new THREE.LineSegments(
+                                    edges,
+                                    new THREE.LineBasicMaterial({ color: 0xe5b97f })
+                                );
+                                group.add(line);
+                                return group;
+                            }
+                        };
+
+                        function switchShape(shapeName) {
+                            if (currentShapeGroup) {
+                                scene.remove(currentShapeGroup);
+                            }
+                            currentShapeGroup = shapes[shapeName]();
+                            scene.add(currentShapeGroup);
+                        }
+
+                        // Initialize with cube
+                        switchShape('cube');
+                        camera.position.z = 5;
+
+                        const onMouseDown = (event) => {
+                            isDragging = true;
+                            previousMousePosition = {
+                                x: event.clientX,
+                                y: event.clientY
+                            };
+                        };
+
+                        const onMouseMove = (event) => {
+                            if (!isDragging || !currentShapeGroup) return;
+                            const deltaMove = {
+                                x: event.clientX - previousMousePosition.x,
+                                y: event.clientY - previousMousePosition.y
+                            };
+                            currentShapeGroup.rotation.y += deltaMove.x * 0.01;
+                            currentShapeGroup.rotation.x += deltaMove.y * 0.01;
+                            previousMousePosition = {
+                                x: event.clientX,
+                                y: event.clientY
+                            };
+                        };
+
+                        const onMouseUp = () => {
+                            isDragging = false;
+                        };
+
+                        renderer.domElement.addEventListener("mousedown", onMouseDown);
+                        document.addEventListener("mousemove", onMouseMove);
+                        document.addEventListener("mouseup", onMouseUp);
+
+                        // Create tabs
+                        const tabsContainer = document.createElement("div");
+                        tabsContainer.className = "shape-tabs";
+                        Object.keys(shapes).forEach(shapeName => {
+                            const tab = document.createElement("button");
+                            tab.className = "shape-tab";
+                            tab.textContent = shapeName.charAt(0).toUpperCase() + shapeName.slice(1);
+                            tab.onclick = () => {
+                                document.querySelectorAll(".shape-tab").forEach(t => t.classList.remove("active"));
+                                tab.classList.add("active");
+                                switchShape(shapeName);
+                            };
+                            if (shapeName === 'cube') {
+                                tab.classList.add("active");
+                            }
+                            tabsContainer.appendChild(tab);
+                        });
+                        cube_container.appendChild(tabsContainer);
+
+                        const closeBtn = document.createElement("button");
+                        closeBtn.className = "cube-btn";
+                        closeBtn.textContent = "Close";
+                        closeBtn.style.position = "absolute";
+                        closeBtn.style.top = "10px";
+                        closeBtn.style.right = "10px";
+                        closeBtn.onclick = () => {
+                            if (cube_container) {
+                                cube_container.remove();
+                                cube_container = null;
+                            }
+                        };
+                        cube_container.appendChild(closeBtn);
+
+                        const toggleBtn = document.createElement("button");
+                        toggleBtn.className = "cube-btn";
+                        toggleBtn.textContent = "Auto Rotate: ON";
+                        toggleBtn.style.position = "absolute";
+                        toggleBtn.style.top = "10px";
+                        toggleBtn.style.left = "10px";
+                        toggleBtn.onclick = () => {
+                            autoRotate = !autoRotate;
+                            toggleBtn.textContent = `Auto Rotate: ${autoRotate ? "ON" : "OFF"}`;
+                        };
+                        cube_container.appendChild(toggleBtn);
+
+                        const animate = () => {
+                            requestAnimationFrame(animate);
+                            if (autoRotate && !isDragging && currentShapeGroup) {
+                                currentShapeGroup.rotation.x += rotationSpeed.x;
+                                currentShapeGroup.rotation.y += rotationSpeed.y;
+                            }
+                            renderer.render(scene, camera);
+                        };
+                        animate();
+
+                        return () => {
+                            try {
+                                renderer.domElement.removeEventListener("mousedown", onMouseDown);
+                                document.removeEventListener("mousemove", onMouseMove);
+                                document.removeEventListener("mouseup", onMouseUp);
+                                if (cube_container) {
+                                    cube_container.remove();
+                                    cube_container = null;
+                                }
+                            } catch (error) {
+                                console.error("Error cleaning up 3D cube:", error);
+                            }
+                        };
+                    } catch (error) {
+                        console.error("Error creating 3D cube:", error);
+                        return () => { };
+                    }
+                }
+
+                function createSorter() {
+                    try {
+                        if (sorter_container) {
+                            if (sorter_animation_id) {
+                                cancelAnimationFrame(sorter_animation_id);
+                                sorter_animation_id = null;
+                            }
+                            sorter_container.remove();
+                            sorter_container = null;
+                            return () => { };
+                        }
+
+                        sorter_container = document.createElement("div");
+                        sorter_container.id = "sorter-container";
+                        // Prevent clicks inside from closing
+                        sorter_container.addEventListener("click", (e) => {
+                            e.stopPropagation();
+                        });
+                        sorter_container.addEventListener("mousedown", (e) => {
+                            e.stopPropagation();
+                        });
+                        document.body.appendChild(sorter_container);
+
+                        // Header
+                        const header = document.createElement("div");
+                        header.className = "sorter-header";
+                        const title = document.createElement("div");
+                        title.className = "sorter-title";
+                        title.textContent = "# Algorithm Sorter";
+                        const closeBtn = document.createElement("button");
+                        closeBtn.className = "cube-btn";
+                        closeBtn.textContent = "×";
+                        closeBtn.onclick = () => {
+                            if (sorter_animation_id) {
+                                cancelAnimationFrame(sorter_animation_id);
+                                sorter_animation_id = null;
+                            }
+                            if (sorter_container) {
+                                sorter_container.remove();
+                                sorter_container = null;
+                            }
+                        };
+                        header.appendChild(title);
+                        header.appendChild(closeBtn);
+                        sorter_container.appendChild(header);
+
+                        // Controls
+                        const controls = document.createElement("div");
+                        controls.className = "sorter-controls";
+
+                        const algorithmGroup = document.createElement("div");
+                        algorithmGroup.className = "sorter-control-group";
+                        const algorithmLabel = document.createElement("label");
+                        algorithmLabel.textContent = "Algorithm:";
+                        const algorithmSelect = document.createElement("select");
+                        algorithmSelect.id = "sorter-algorithm";
+                        ["bubble", "quick", "merge", "insertion", "selection"].forEach(alg => {
+                            const option = document.createElement("option");
+                            option.value = alg;
+                            option.textContent = alg.charAt(0).toUpperCase() + alg.slice(1);
+                            algorithmSelect.appendChild(option);
+                        });
+                        // Prevent dropdown from closing container
+                        algorithmSelect.addEventListener("mousedown", (e) => {
+                            e.stopPropagation();
+                        });
+                        algorithmSelect.addEventListener("click", (e) => {
+                            e.stopPropagation();
+                        });
+                        algorithmSelect.addEventListener("change", (e) => {
+                            e.stopPropagation();
+                        });
+                        algorithmGroup.appendChild(algorithmLabel);
+                        algorithmGroup.appendChild(algorithmSelect);
+                        controls.appendChild(algorithmGroup);
+
+                        const sizeGroup = document.createElement("div");
+                        sizeGroup.className = "sorter-control-group";
+                        const sizeLabel = document.createElement("label");
+                        sizeLabel.textContent = "Size:";
+                        const sizeInput = document.createElement("input");
+                        sizeInput.id = "sorter-size";
+                        sizeInput.type = "number";
+                        sizeInput.value = "20";
+                        sizeInput.min = "5";
+                        sizeInput.max = "50";
+                        sizeGroup.appendChild(sizeLabel);
+                        sizeGroup.appendChild(sizeInput);
+                        controls.appendChild(sizeGroup);
+
+                        const speedGroup = document.createElement("div");
+                        speedGroup.className = "sorter-control-group";
+                        const speedLabel = document.createElement("label");
+                        speedLabel.textContent = "Speed:";
+                        const speedSelect = document.createElement("select");
+                        speedSelect.id = "sorter-speed";
+                        ["slow", "medium", "fast"].forEach(speed => {
+                            const option = document.createElement("option");
+                            option.value = speed;
+                            option.textContent = speed.charAt(0).toUpperCase() + speed.slice(1);
+                            if (speed === "medium") option.selected = true;
+                            speedSelect.appendChild(option);
+                        });
+                        // Prevent dropdown from closing container
+                        speedSelect.addEventListener("mousedown", (e) => {
+                            e.stopPropagation();
+                        });
+                        speedSelect.addEventListener("click", (e) => {
+                            e.stopPropagation();
+                        });
+                        speedSelect.addEventListener("change", (e) => {
+                            e.stopPropagation();
+                        });
+                        speedGroup.appendChild(speedLabel);
+                        speedGroup.appendChild(speedSelect);
+                        controls.appendChild(speedGroup);
+
+                        const startBtn = document.createElement("button");
+                        startBtn.className = "cube-btn";
+                        startBtn.textContent = "Start";
+                        startBtn.onclick = () => startSorting();
+                        controls.appendChild(startBtn);
+
+                        const resetBtn = document.createElement("button");
+                        resetBtn.className = "cube-btn";
+                        resetBtn.textContent = "Reset";
+                        resetBtn.onclick = () => resetArray();
+                        controls.appendChild(resetBtn);
+
+                        sorter_container.appendChild(controls);
+
+                        // Canvas container
+                        const canvasContainer = document.createElement("div");
+                        canvasContainer.className = "sorter-canvas-container";
+                        const canvas = document.createElement("canvas");
+                        canvas.id = "sorter-canvas";
+                        canvas.width = 560;
+                        canvas.height = 300;
+                        canvasContainer.appendChild(canvas);
+                        sorter_container.appendChild(canvasContainer);
+
+                        // Status
+                        const status = document.createElement("div");
+                        status.className = "sorter-status";
+                        status.id = "sorter-status";
+                        status.innerHTML = '<span>Status: Ready</span><span>Comparisons: 0</span>';
+                        sorter_container.appendChild(status);
+
+                        const ctx = canvas.getContext("2d");
+                        let array = [];
+                        let isSorting = false;
+                        let comparisons = 0;
+                        let speed = 50;
+
+                        function resetArray() {
+                            if (isSorting) return;
+                            const size = parseInt(sizeInput.value) || 20;
+                            array = Array.from({ length: size }, () => Math.floor(Math.random() * 250) + 10);
+                            comparisons = 0;
+                            drawArray();
+                            updateStatus("Ready", 0);
+                        }
+
+                        function drawArray(highlightIndices = []) {
+                            ctx.clearRect(0, 0, canvas.width, canvas.height);
+                            const barWidth = canvas.width / array.length;
+                            const maxHeight = canvas.height - 20;
+
+                            array.forEach((value, index) => {
+                                const barHeight = (value / 260) * maxHeight;
+                                const x = index * barWidth;
+                                const y = canvas.height - barHeight;
+
+                                if (highlightIndices.includes(index)) {
+                                    ctx.fillStyle = "#e5b97f";
+                                } else {
+                                    ctx.fillStyle = "#4ecdc4";
+                                }
+
+                                ctx.fillRect(x, y, barWidth - 1, barHeight);
+                            });
+                        }
+
+                        function updateStatus(statusText, comps) {
+                            const statusEl = document.getElementById("sorter-status");
+                            statusEl.innerHTML = `<span>Status: ${statusText}</span><span>Comparisons: ${comps}</span>`;
+                        }
+
+                        function sleep(ms) {
+                            return new Promise(resolve => setTimeout(resolve, ms));
+                        }
+
+                        function beep(frequency = 800, duration = 50, volume = 0.1) {
+                            try {
+                                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                                const oscillator = audioContext.createOscillator();
+                                const gainNode = audioContext.createGain();
+
+                                oscillator.connect(gainNode);
+                                gainNode.connect(audioContext.destination);
+
+                                oscillator.frequency.value = frequency;
+                                oscillator.type = 'sine';
+                                gainNode.gain.setValueAtTime(volume, audioContext.currentTime);
+                                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration / 1000);
+
+                                oscillator.start(audioContext.currentTime);
+                                oscillator.stop(audioContext.currentTime + duration / 1000);
+                            } catch (error) {
+                                // Silently fail if audio context is not available
+                            }
+                        }
+
+                        async function bubbleSort() {
+                            isSorting = true;
+                            const arr = [...array];
+                            const n = arr.length;
+                            comparisons = 0;
+
+                            for (let i = 0; i < n - 1; i++) {
+                                for (let j = 0; j < n - i - 1; j++) {
+                                    comparisons++;
+                                    drawArray([j, j + 1]);
+                                    updateStatus("Sorting...", comparisons);
+                                    await sleep(speed);
+
+                                    if (arr[j] > arr[j + 1]) {
+                                        beep(600, 30, 0.08);
+                                        [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+                                        array = [...arr];
+                                        drawArray([j, j + 1]);
+                                        await sleep(speed);
+                                    }
+                                }
+                            }
+                            drawArray([]);
+                            beep(1000, 100, 0.15);
+                            updateStatus("Complete!", comparisons);
+                            isSorting = false;
+                        }
+
+                        async function quickSort() {
+                            isSorting = true;
+                            const arr = [...array];
+                            comparisons = 0;
+
+                            async function partition(low, high) {
+                                const pivot = arr[high];
+                                let i = low - 1;
+
+                                for (let j = low; j < high; j++) {
+                                    comparisons++;
+                                    drawArray([j, high, i + 1]);
+                                    updateStatus("Sorting...", comparisons);
+                                    await sleep(speed);
+
+                                    if (arr[j] < pivot) {
+                                        i++;
+                                        beep(700, 30, 0.08);
+                                        [arr[i], arr[j]] = [arr[j], arr[i]];
+                                        array = [...arr];
+                                        drawArray([i, j, high]);
+                                        await sleep(speed);
+                                    }
+                                }
+                                [arr[i + 1], arr[high]] = [arr[high], arr[i + 1]];
+                                array = [...arr];
+                                drawArray([i + 1, high]);
+                                await sleep(speed);
+                                return i + 1;
+                            }
+
+                            async function sort(low, high) {
+                                if (low < high) {
+                                    const pi = await partition(low, high);
+                                    await sort(low, pi - 1);
+                                    await sort(pi + 1, high);
+                                }
+                            }
+
+                            await sort(0, arr.length - 1);
+                            drawArray([]);
+                            updateStatus("Complete!", comparisons);
+                            isSorting = false;
+                        }
+
+                        async function mergeSort() {
+                            isSorting = true;
+                            const arr = [...array];
+                            comparisons = 0;
+
+                            async function merge(left, right, start) {
+                                let result = [];
+                                let i = 0, j = 0;
+
+                                while (i < left.length && j < right.length) {
+                                    comparisons++;
+                                    drawArray([start + i, start + left.length + j]);
+                                    updateStatus("Sorting...", comparisons);
+                                    await sleep(speed);
+
+                                    if (left[i] <= right[j]) {
+                                        result.push(left[i]);
+                                        i++;
+                                    } else {
+                                        result.push(right[j]);
+                                        j++;
+                                    }
+                                }
+
+                                return result.concat(left.slice(i)).concat(right.slice(j));
+                            }
+
+                            async function sort(arr, start = 0) {
+                                if (arr.length <= 1) return arr;
+
+                                const mid = Math.floor(arr.length / 2);
+                                const left = await sort(arr.slice(0, mid), start);
+                                const right = await sort(arr.slice(mid), start + mid);
+                                const merged = await merge(left, right, start);
+
+                                for (let i = 0; i < merged.length; i++) {
+                                    beep(550, 20, 0.06);
+                                    array[start + i] = merged[i];
+                                    drawArray([start + i]);
+                                    await sleep(speed / 2);
+                                }
+
+                                return merged;
+                            }
+
+                            await sort(arr);
+                            drawArray([]);
+                            updateStatus("Complete!", comparisons);
+                            isSorting = false;
+                        }
+
+                        async function insertionSort() {
+                            isSorting = true;
+                            const arr = [...array];
+                            const n = arr.length;
+                            comparisons = 0;
+
+                            for (let i = 1; i < n; i++) {
+                                let key = arr[i];
+                                let j = i - 1;
+
+                                while (j >= 0 && arr[j] > key) {
+                                    comparisons++;
+                                    drawArray([j, j + 1, i]);
+                                    updateStatus("Sorting...", comparisons);
+                                    await sleep(speed);
+
+                                    beep(650, 25, 0.08);
+                                    arr[j + 1] = arr[j];
+                                    array = [...arr];
+                                    drawArray([j, j + 1]);
+                                    await sleep(speed);
+                                    j--;
+                                }
+                                arr[j + 1] = key;
+                                array = [...arr];
+                                drawArray([i]);
+                                await sleep(speed);
+                            }
+                            drawArray([]);
+                            beep(1000, 100, 0.15);
+                            updateStatus("Complete!", comparisons);
+                            isSorting = false;
+                        }
+
+                        async function selectionSort() {
+                            isSorting = true;
+                            const arr = [...array];
+                            const n = arr.length;
+                            comparisons = 0;
+
+                            for (let i = 0; i < n - 1; i++) {
+                                let minIdx = i;
+                                for (let j = i + 1; j < n; j++) {
+                                    comparisons++;
+                                    drawArray([i, j, minIdx]);
+                                    updateStatus("Sorting...", comparisons);
+                                    await sleep(speed);
+
+                                    if (arr[j] < arr[minIdx]) {
+                                        minIdx = j;
+                                    }
+                                }
+                                beep(750, 30, 0.08);
+                                [arr[i], arr[minIdx]] = [arr[minIdx], arr[i]];
+                                array = [...arr];
+                                drawArray([i, minIdx]);
+                                await sleep(speed);
+                            }
+                            drawArray([]);
+                            updateStatus("Complete!", comparisons);
+                            isSorting = false;
+                        }
+
+                        async function startSorting() {
+                            if (isSorting) return;
+                            const algorithm = algorithmSelect.value;
+                            const speedValue = speedSelect.value;
+                            speed = speedValue === "slow" ? 100 : speedValue === "fast" ? 10 : 50;
+
+                            switch (algorithm) {
+                                case "bubble":
+                                    await bubbleSort();
+                                    break;
+                                case "quick":
+                                    await quickSort();
+                                    break;
+                                case "merge":
+                                    await mergeSort();
+                                    break;
+                                case "insertion":
+                                    await insertionSort();
+                                    break;
+                                case "selection":
+                                    await selectionSort();
+                                    break;
+                            }
+                        }
+
+                        resetArray();
+
+                        return () => {
+                            try {
+                                if (sorter_animation_id) {
+                                    cancelAnimationFrame(sorter_animation_id);
+                                    sorter_animation_id = null;
+                                }
+                                if (sorter_container) {
+                                    sorter_container.remove();
+                                    sorter_container = null;
+                                }
+                            } catch (error) {
+                                console.error("Error cleaning up sorter:", error);
+                            }
+                        };
+                    } catch (error) {
+                        console.error("Error creating sorter:", error);
+                        return () => { };
+                    }
+                }
+
+                async function execute(raw_command) {
+                    try {
+                        const command = raw_command.toLowerCase().trim().replace(/^command\s+/, "");
+                        const line = document.createElement("div");
+                        const prompt = document.createElement("span");
+                        const accent = document.createElement("span");
+                        const output = document.createElement("span");
+
+                        line.className = "line";
+                        prompt.className = "prompt";
+                        prompt.textContent = "miraii@terminal";
+                        accent.className = "accent";
+                        accent.textContent = "~/";
+                        output.style.marginLeft = "5px";
+
+                        if (command === "matrix") {
+                            if (!no_matrix) {
+                                no_matrix = matrix();
+                                output.textContent = "Matrix effect activated! Press matrix again to stop.";
+                            } else {
+                                no_matrix();
+                                no_matrix = null;
+                                output.textContent = "Matrix effect stopped.";
+                            }
+                            line.appendChild(prompt);
+                            line.appendChild(accent);
+                            line.appendChild(output);
+                            content.appendChild(line);
+                            content.scrollTop = content.scrollHeight;
+                            return;
+                        }
+
+                        if (command === "gravity") {
+                            if (!no_gravity) {
+                                no_gravity = initGravity();
+                                output.textContent = "Gravity mode activated! Everything is falling and draggable. Press gravity again to stop.";
+                            } else {
+                                no_gravity();
+                                no_gravity = null;
+                                output.textContent = "Gravity mode stopped.";
+                            }
+                            line.appendChild(prompt);
+                            line.appendChild(accent);
+                            line.appendChild(output);
+                            content.appendChild(line);
+                            content.scrollTop = content.scrollHeight;
+                            return;
+                        }
+
+                        if (command === "3d" || command === "cube") {
+                            const cleanup = create3DCube();
+                            if (cube_container) {
+                                output.textContent = "3D shapes viewer spawned! Switch between shapes using tabs, drag to rotate, use buttons to control.";
+                            } else {
+                                output.textContent = "3D shapes viewer closed.";
+                            }
+                            line.appendChild(prompt);
+                            line.appendChild(accent);
+                            line.appendChild(output);
+                            content.appendChild(line);
+                            content.scrollTop = content.scrollHeight;
+                            return;
+                        }
+
+                        if (command === "sort" || command === "sorter") {
+                            const cleanup = createSorter();
+                            if (sorter_container) {
+                                output.textContent = "Algorithm sorter opened! Choose algorithm, size, and speed, then click Start.";
+                            } else {
+                                output.textContent = "Algorithm sorter closed.";
+                            }
+                            line.appendChild(prompt);
+                            line.appendChild(accent);
+                            line.appendChild(output);
+                            content.appendChild(line);
+                            content.scrollTop = content.scrollHeight;
+                            return;
+                        }
+
+                        if (command === "clear") {
+                            const children = Array.from(content.children);
+                            let input_line = null;
+                            for (let i = children.length - 1; i >= 0; i--) {
+                                if (children[i].querySelector(".input-container")) {
+                                    input_line = children[i];
+                                    break;
+                                }
+                            }
+                            children.forEach(child => {
+                                try {
+                                    content.removeChild(child);
+                                } catch (e) {
+                                    // Ignore if already removed
+                                }
+                            });
+
+                            if (input_line) {
+                                content.appendChild(input_line);
+                                const input_el = input_line.querySelector(".input");
+                                if (input_el) {
+                                    input_el.focus();
+                                    place_caret_end(input_el);
+                                }
+                            } else {
+                                const new_input_line = document.createElement("div");
+                                new_input_line.className = "line";
+                                const prompt_span = document.createElement("span");
+                                prompt_span.className = "prompt";
+                                prompt_span.textContent = "miraii@terminal";
+                                const accent_span = document.createElement("span");
+                                accent_span.className = "accent";
+                                accent_span.textContent = "~/";
+                                const input_container = document.createElement("span");
+                                input_container.className = "input-container";
+                                const input_span = document.createElement("span");
+                                input_span.className = "input";
+                                input_span.contentEditable = "true";
+                                const cursor_span = document.createElement("span");
+                                cursor_span.className = "cursor";
+                                const char_count_span = document.createElement("span");
+                                char_count_span.className = "char-count";
+                                char_count_span.textContent = "0/45";
+
+                                input_container.appendChild(input_span);
+                                input_container.appendChild(cursor_span);
+                                input_container.appendChild(char_count_span);
+                                new_input_line.appendChild(prompt_span);
+                                new_input_line.appendChild(accent_span);
+                                new_input_line.appendChild(input_container);
+                                content.appendChild(new_input_line);
+                                input_span.focus();
+                                place_caret_end(input_span);
+                            }
+                            return;
+                        }
+
+                        if (command.startsWith("echo ")) {
+                            const text = command.slice(5);
+                            output.textContent = text;
+                        } else if (command === "date") {
+                            const now = new Date();
+                            const options = {
+                                weekday: "long",
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                second: "2-digit",
+                                timeZoneName: "short"
+                            };
+                            output.textContent = now.toLocaleString("en-US", options);
+                        } else if (command === "whoami") {
+                            output.textContent = "miraii";
+                        } else if (command === "pwd") {
+                            output.textContent = "/home/miraii";
+                        } else if (command === "quote") {
+                            output.textContent = "Loading quote...";
+                            line.appendChild(prompt);
+                            line.appendChild(accent);
+                            line.appendChild(output);
+                            const last_line = content.lastElementChild;
+                            if (last_line) {
+                                content.insertBefore(line, last_line);
+                            } else {
+                                content.appendChild(line);
+                            }
+                            content.scrollTop = content.scrollHeight;
+
+                            try {
+                                console.log("[QUOTE] Starting quote fetch...");
+                                const url = "https://thequoteshub.com/api/";
+                                console.log("[QUOTE] Fetching from:", url);
+
+                                const response = await fetch(url);
+                                console.log("[QUOTE] Response status:", response.status);
+                                console.log("[QUOTE] Response ok:", response.ok);
+
+                                if (!response.ok) {
+                                    throw new Error(`HTTP error! status: ${response.status}`);
+                                }
+
+                                const data = await response.json();
+                                console.log("[QUOTE] Received data:", data);
+
+                                // Try both capitalized and lowercase property names
+                                const quoteText = data.Quote || data.text || data.quote;
+                                const quoteAuthor = data.Author || data.author;
+
+                                if (quoteText && quoteAuthor) {
+                                    // Generate unique quote ID
+                                    const quoteId = `Q-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+
+                                    // Remove the loading text and create quote container
+                                    line.removeChild(output);
+
+                                    const quoteContainer = document.createElement("div");
+                                    quoteContainer.className = "quote-container";
+
+                                    const quoteTextEl = document.createElement("div");
+                                    quoteTextEl.className = "quote-text";
+                                    quoteTextEl.textContent = `"${quoteText}"`;
+
+                                    const quoteAuthorEl = document.createElement("div");
+                                    quoteAuthorEl.className = "quote-author";
+                                    quoteAuthorEl.textContent = `— ${quoteAuthor}`;
+
+                                    const quoteIdEl = document.createElement("div");
+                                    quoteIdEl.className = "quote-id";
+                                    quoteIdEl.textContent = `ID: ${quoteId}`;
+
+                                    quoteContainer.appendChild(quoteTextEl);
+                                    quoteContainer.appendChild(quoteAuthorEl);
+                                    quoteContainer.appendChild(quoteIdEl);
+
+                                    line.appendChild(quoteContainer);
+                                    console.log("[QUOTE] Successfully displayed quote with ID:", quoteId);
+                                } else {
+                                    console.warn("[QUOTE] Missing quote text or author in response:", data);
+                                    output.textContent = "Failed to load quote. Please try again.";
+                                }
+                            } catch (error) {
+                                console.error("[QUOTE] Error fetching quote:", error);
+                                console.error("[QUOTE] Error name:", error.name);
+                                console.error("[QUOTE] Error message:", error.message);
+                                console.error("[QUOTE] Error stack:", error.stack);
+                                output.textContent = `Error fetching quote: ${error.message}. Check console for details.`;
+                            }
+                            content.scrollTop = content.scrollHeight;
+                            return;
+                        } else if (command === "help") {
+                            const helpModal = document.getElementById("help-modal");
+                            if (helpModal) {
+                                helpModal.style.display = "flex";
+                            }
+                            return;
+                        } else {
+                            output.textContent = commands[command] || `Command '${command}' not found. Type 'help' for available commands.`;
+                        }
+
+                        line.appendChild(prompt);
+                        line.appendChild(accent);
+                        line.appendChild(output);
+                        const last_line = content.lastElementChild;
+                        if (last_line) {
+                            content.insertBefore(line, last_line);
+                        } else {
+                            content.appendChild(line);
+                        }
+                        content.scrollTop = content.scrollHeight;
+                    } catch (error) {
+                        console.error("Error executing command:", error);
+                    }
+                }
+
+                // Event listeners
+                input.addEventListener("input", () => {
+                    try {
+                        if (input.textContent.length > max_chars) {
+                            input.textContent = input.textContent.slice(0, max_chars);
+                            place_caret_end(input);
+                        }
+                        char_count.textContent = `${input.textContent.length}/${max_chars}`;
+                    } catch (error) {
+                        console.error("Error handling input:", error);
+                    }
+                });
+
+                input.addEventListener("keydown", (e) => {
+                    try {
+                        if (e.key === "Enter") {
+                            e.preventDefault();
+                            execute(input.textContent.trim());
+                            input.textContent = "";
+                            char_count.textContent = `0/${max_chars}`;
+                        }
+                        if (e.key === "Backspace") {
+                            e.preventDefault();
+                            const text = input.textContent;
+                            input.textContent = text.slice(0, text.length - 1);
+                            place_caret_end(input);
+                            char_count.textContent = `${input.textContent.length}/${max_chars}`;
+                        }
+                    } catch (error) {
+                        console.error("Error handling keydown:", error);
+                    }
+                });
+
+                document.addEventListener("click", (event) => {
+                    try {
+                        if (event.target.closest(".button") ||
+                            event.target.closest(".modal") ||
+                            event.target.closest(".link-container") ||
+                            event.target.closest("#sorter-container") ||
+                            event.target.closest("#cube-container") ||
+                            event.target.closest("select") ||
+                            event.target.closest("option")) {
+                            return;
+                        }
+                        input.focus();
+                        place_caret_end(input);
+                    } catch (error) {
+                        console.error("Error handling click:", error);
+                    }
+                });
+
+                // Initialize icons
+                lucide.createIcons();
+            } catch (error) {
+                console.error("Error initializing terminal:", error);
             }
-        });
+        })();
+    </script>
+    <script>
+        (async () => {
+            'use strict';
 
-        // Navigation buttons
-        prev_log_btn.addEventListener("click", () => {
-            if (current_log_index > 0) {
-                current_log_index--;
-                show_log_in_modal(current_log_index);
+            const waitForLucide = () => {
+                return new Promise((resolve) => {
+                    if (typeof lucide !== 'undefined' && lucide.createIcons) {
+                        resolve();
+                    } else {
+                        const checkInterval = setInterval(() => {
+                            if (typeof lucide !== 'undefined' && lucide.createIcons) {
+                                clearInterval(checkInterval);
+                                resolve();
+                            }
+                        }, 10);
+                    }
+                });
+            };
+
+            try {
+                await waitForLucide();
+
+                const root = document.documentElement;
+                const theme_toggle = document.getElementById("theme-toggle");
+                const theme_icon = document.getElementById("theme-icon");
+
+                if (!theme_toggle || !theme_icon) {
+                    throw new Error("Theme elements not found");
+                }
+
+                function update_theme_icon(theme) {
+                    try {
+                        if (!theme_icon) return;
+                        const existing_svg = theme_icon.querySelector("svg");
+                        if (existing_svg) {
+                            existing_svg.remove();
+                        }
+                        theme_icon.setAttribute("data-lucide", "palette");
+                        lucide.createIcons({ container: theme_icon });
+                    } catch (error) {
+                        console.error("Error updating theme icon:", error);
+                    }
+                }
+
+                function update_lucide_logo(theme) {
+                    try {
+                        const lucide_logo = document.getElementById("lucide-logo");
+                        const lucide_modal_logo = document.getElementById("lucide-modal-logo");
+
+                        if (lucide_logo) {
+                            lucide_logo.src = (theme === "white" || theme === "light")
+                                ? "https://lucide.dev/logo.light.svg"
+                                : "https://lucide.dev/logo.dark.svg";
+                        }
+                        if (lucide_modal_logo) {
+                            lucide_modal_logo.src = (theme === "white" || theme === "light")
+                                ? "https://lucide.dev/logo.light.svg"
+                                : "https://lucide.dev/logo.dark.svg";
+                        }
+                    } catch (error) {
+                        console.error("Error updating lucide logo:", error);
+                    }
+                }
+
+                function update_active_theme_option(theme) {
+                    try {
+                        const theme_options = document.querySelectorAll(".theme-option");
+                        theme_options.forEach(option => {
+                            const option_theme = option.getAttribute("data-theme");
+                            if (option_theme === theme || (theme === "light" && option_theme === "white")) {
+                                option.classList.add("active");
+                            } else {
+                                option.classList.remove("active");
+                            }
+                        });
+                    } catch (error) {
+                        console.error("Error updating active theme option:", error);
+                    }
+                }
+
+                // Initialize theme
+                let saved_theme = localStorage.getItem("theme") || "dark";
+                // Handle backward compatibility: "light" -> "white"
+                if (saved_theme === "light") {
+                    saved_theme = "white";
+                    localStorage.setItem("theme", "white");
+                }
+                root.setAttribute("data-theme", saved_theme);
+                update_theme_icon(saved_theme);
+                update_lucide_logo(saved_theme);
+                update_active_theme_option(saved_theme);
+
+                // Theme modal
+                const theme_modal = document.getElementById("theme-modal");
+                const close_theme_modal = document.getElementById("close-theme-modal");
+                const theme_options = document.querySelectorAll(".theme-option");
+
+                // Theme toggle handler - opens modal
+                theme_toggle.addEventListener("click", () => {
+                    try {
+                        if (theme_modal) {
+                            theme_modal.style.display = "flex";
+                        }
+                    } catch (error) {
+                        console.error("Error opening theme modal:", error);
+                    }
+                });
+
+                // Close theme modal
+                if (close_theme_modal && theme_modal) {
+                    close_theme_modal.addEventListener("click", () => {
+                        try {
+                            theme_modal.style.display = "none";
+                        } catch (error) {
+                            console.error("Error closing theme modal:", error);
+                        }
+                    });
+
+                    theme_modal.addEventListener("click", (event) => {
+                        try {
+                            if (event.target === theme_modal) {
+                                theme_modal.style.display = "none";
+                            }
+                        } catch (error) {
+                            console.error("Error handling theme modal click:", error);
+                        }
+                    });
+                }
+
+                // Theme selection handler
+                theme_options.forEach(option => {
+                    option.addEventListener("click", () => {
+                        try {
+                            const selected_theme = option.getAttribute("data-theme");
+                            root.setAttribute("data-theme", selected_theme);
+                            localStorage.setItem("theme", selected_theme);
+                            update_theme_icon(selected_theme);
+                            update_lucide_logo(selected_theme);
+                            update_active_theme_option(selected_theme);
+                            if (theme_modal) {
+                                theme_modal.style.display = "none";
+                            }
+                        } catch (error) {
+                            console.error("Error selecting theme:", error);
+                        }
+                    });
+                });
+
+                // Credits modal
+                const credits_button = document.getElementById("credits-button");
+                const modal = document.getElementById("credits-modal");
+                const close_button = document.getElementById("close-modal");
+
+                if (credits_button && modal && close_button) {
+                    credits_button.addEventListener("click", () => {
+                        try {
+                            modal.style.display = "flex";
+                        } catch (error) {
+                            console.error("Error opening credits modal:", error);
+                        }
+                    });
+
+                    close_button.addEventListener("click", () => {
+                        try {
+                            modal.style.display = "none";
+                        } catch (error) {
+                            console.error("Error closing credits modal:", error);
+                        }
+                    });
+
+                    modal.addEventListener("click", (event) => {
+                        try {
+                            if (event.target === modal) {
+                                modal.style.display = "none";
+                            }
+                        } catch (error) {
+                            console.error("Error handling modal click:", error);
+                        }
+                    });
+                }
+
+                // Lucide modal
+                const lucide_modal_button = document.getElementById("lucide-modal-button");
+                const lucide_modal = document.getElementById("lucide-modal");
+                const close_lucide_modal = document.getElementById("close-lucide-modal");
+
+                if (lucide_modal_button && lucide_modal && close_lucide_modal) {
+                    lucide_modal_button.addEventListener("click", () => {
+                        try {
+                            lucide_modal.style.display = "flex";
+                        } catch (error) {
+                            console.error("Error opening lucide modal:", error);
+                        }
+                    });
+
+                    close_lucide_modal.addEventListener("click", () => {
+                        try {
+                            lucide_modal.style.display = "none";
+                        } catch (error) {
+                            console.error("Error closing lucide modal:", error);
+                        }
+                    });
+
+                    lucide_modal.addEventListener("click", (event) => {
+                        try {
+                            if (event.target === lucide_modal) {
+                                lucide_modal.style.display = "none";
+                            }
+                        } catch (error) {
+                            console.error("Error handling lucide modal click:", error);
+                        }
+                    });
+                }
+
+                // Help modal
+                const help_modal = document.getElementById("help-modal");
+                const close_help = document.getElementById("close-help");
+                const help_tab_btns = document.querySelectorAll("#help-modal .tab-btn");
+                const help_tab_contents = document.querySelectorAll("#help-modal .tab-content");
+                const input = document.querySelector(".input");
+
+                function place_caret_end(element) {
+                    try {
+                        if (!element) return;
+                        const range = document.createRange();
+                        const select = window.getSelection();
+                        if (!select) return;
+                        range.selectNodeContents(element);
+                        range.collapse(false);
+                        select.removeAllRanges();
+                        select.addRange(range);
+                    } catch (error) {
+                        console.error("Error placing caret:", error);
+                    }
+                }
+
+                if (close_help && help_modal && input) {
+                    close_help.addEventListener("click", () => {
+                        try {
+                            help_modal.style.display = "none";
+                            input.focus();
+                            place_caret_end(input);
+                        } catch (error) {
+                            console.error("Error closing help modal:", error);
+                        }
+                    });
+
+                    help_modal.addEventListener("click", (event) => {
+                        try {
+                            if (event.target === help_modal) {
+                                help_modal.style.display = "none";
+                                input.focus();
+                                place_caret_end(input);
+                            }
+                        } catch (error) {
+                            console.error("Error handling help modal click:", error);
+                        }
+                    });
+                }
+
+                if (help_tab_btns.length > 0 && help_tab_contents.length > 0) {
+                    help_tab_btns.forEach(btn => {
+                        btn.addEventListener("click", () => {
+                            try {
+                                help_tab_btns.forEach(b => b.classList.remove("active"));
+                                help_tab_contents.forEach(c => c.classList.add("hidden"));
+                                btn.classList.add("active");
+                                const targetTab = document.getElementById(btn.dataset.tab + "-tab");
+                                if (targetTab) {
+                                    targetTab.classList.remove("hidden");
+                                }
+                                // Re-apply search filter when switching tabs
+                                const searchInput = document.getElementById("help-search");
+                                if (searchInput && searchInput.value) {
+                                    filterCommands(searchInput.value);
+                                }
+                            } catch (error) {
+                                console.error("Error switching tabs:", error);
+                            }
+                        });
+                    });
+                }
+
+                // Search functionality
+                const help_search = document.getElementById("help-search");
+                if (help_search) {
+                    function filterCommands(searchTerm) {
+                        try {
+                            const searchLower = searchTerm.toLowerCase().trim();
+                            const allCmdItems = document.querySelectorAll("#help-modal .cmd-item");
+
+                            allCmdItems.forEach(item => {
+                                const cmdName = item.querySelector(".cmd-name")?.textContent.toLowerCase() || "";
+                                const cmdDesc = item.querySelector(".cmd-desc")?.textContent.toLowerCase() || "";
+                                const cmdDetail = item.querySelector(".cmd-detail")?.textContent.toLowerCase() || "";
+
+                                if (searchLower === "" ||
+                                    cmdName.includes(searchLower) ||
+                                    cmdDesc.includes(searchLower) ||
+                                    cmdDetail.includes(searchLower)) {
+                                    item.classList.remove("hidden");
+                                } else {
+                                    item.classList.add("hidden");
+                                }
+                            }); z
+                        } catch (error) {
+                            console.error("Error filtering commands:", error);
+                        }
+                    }
+
+                    help_search.addEventListener("input", (e) => {
+                        try {
+                            filterCommands(e.target.value);
+                        } catch (error) {
+                            console.error("Error handling search input:", error);
+                        }
+                    });
+
+                    // Clear search when modal closes
+                    if (close_help) {
+                        const originalCloseHandler = close_help.onclick;
+                        close_help.addEventListener("click", () => {
+                            try {
+                                if (help_search) {
+                                    help_search.value = "";
+                                    filterCommands("");
+                                }
+                            } catch (error) {
+                                console.error("Error clearing search:", error);
+                            }
+                        });
+                    }
+                }
+
+                // Command items
+                const cmd_items = document.querySelectorAll(".cmd-item");
+                cmd_items.forEach(item => {
+                    item.addEventListener("click", (e) => {
+                        try {
+                            if (e.target.classList.contains("cmd-detail")) {
+                                return;
+                            }
+                            const is_expanded = item.classList.contains("expanded");
+                            cmd_items.forEach(other_item => {
+                                if (other_item !== item) {
+                                    other_item.classList.remove("expanded");
+                                }
+                            });
+                            if (is_expanded) {
+                                item.classList.remove("expanded");
+                            } else {
+                                item.classList.add("expanded");
+                            }
+                        } catch (error) {
+                            console.error("Error handling cmd item click:", error);
+                        }
+                    });
+                });
+            } catch (error) {
+                console.error("Error initializing UI:", error);
             }
-        });
-
-        next_log_btn.addEventListener("click", () => {
-            if (current_log_index < week_logs.length - 1) {
-                current_log_index++;
-                show_log_in_modal(current_log_index);
-            }
-        });
-
-        // Search functionality
-        search_input.addEventListener("input", () => {
-            const query = search_input.value.toLowerCase();
-            week_logs.forEach(log => {
-                const title = log.querySelector(".week-title").textContent.toLowerCase();
-                const text = log.querySelector(".week-text").textContent.toLowerCase();
-                const visible = title.includes(query) || text.includes(query);
-                log.style.display = visible ? "block" : "none";
-            });
-        });
-
-        // Sort by date
-        sort_date_btn.addEventListener("click", () => {
-            const content = document.querySelector(".content");
-            const logs_array = Array.from(week_logs);
-
-            logs_array.sort((a, b) => {
-                const date_a = new Date(a.querySelector(".week-date").textContent.split('/').reverse().join('-'));
-                const date_b = new Date(b.querySelector(".week-date").textContent.split('/').reverse().join('-'));
-                return date_b - date_a; // Newest first
-            });
-
-            logs_array.forEach(log => content.appendChild(log));
-        });
-
-        // Export logs
-        export_btn.addEventListener("click", () => {
-            let export_text = "# Weekly Logs Export\n\n";
-            week_logs.forEach(log => {
-                const title = log.querySelector(".week-title").textContent;
-                const date = log.querySelector(".week-date").textContent;
-                const text = log.dataset.full || log.querySelector(".week-text").textContent;
-                export_text += `${title} (${date})\n${text}\n\n---\n\n`;
-            });
-
-            const blob = new Blob([export_text], { type: "text/plain" });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = "weekly-logs.txt";
-            a.click();
-            URL.revokeObjectURL(url);
-        });
-
-        // Export as JSON
-        export_json_btn.addEventListener("click", () => {
-            const logs_data = Array.from(week_logs).map(log => ({
-                title: log.querySelector(".week-title").textContent,
-                date: log.querySelector(".week-date").textContent,
-                content: log.dataset.full || log.querySelector(".week-text").textContent
-            }));
-
-            const json = JSON.stringify(logs_data, null, 2);
-            const blob = new Blob([json], { type: "application/json" });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = "weekly-logs.json";
-            a.click();
-            URL.revokeObjectURL(url);
-        });
-
-        // Toggle theme
-        toggle_theme_btn.addEventListener("click", () => {
-            is_light_mode = !is_light_mode;
-            document.documentElement.classList.toggle("light-mode", is_light_mode);
-            document.getElementById("theme-text").textContent = is_light_mode ? "Dark Mode" : "Light Mode";
-            const icon = toggle_theme_btn.querySelector("i");
-            icon.setAttribute("data-lucide", is_light_mode ? "moon" : "sun");
-            lucide.createIcons();
-        });
-
-        // Initialize icons
-        lucide.createIcons();
+        })();
     </script>
 </body>
 
