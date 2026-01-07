@@ -1,310 +1,554 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html lang="fr">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>MiMi</title>
 
-        <link href="https://fonts.cdnfonts.com/css/jetbrains-mono" rel="stylesheet">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <style>
-            * {
-                box-sizing: border-box;
-                margin: 0;
-                padding: 0;
+    <!-- Meta Description -->
+    <meta name="description"
+        content="MiMi Terminal - An interactive terminal experience by Miraii. Explore commands, themes, and more!">
+
+    <!-- Open Graph / Discord -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="MiMi Terminal">
+    <meta property="og:description"
+        content="An interactive terminal experience by Miraii. Explore commands, themes, and more!">
+    <meta property="og:image" content="https://images.guns.lol/Lbsfh.jpg">
+    <meta property="og:url" content="https://jxl-cpl.github.io">
+
+    <title>MiMi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --background-color: #1a1316;
+            --text-color: #d8d3ce;
+            --accent-color: #e5b97f;
+            --border-color: #2a2024;
+            --secondary-text-color: #7a7276;
+        }
+
+        :root[data-theme="light"] {
+            --background-color: #f5f5f5;
+            --text-color: #2a2a2a;
+            --accent-color: #d97706;
+            --border-color: #d1d5db;
+            --secondary-text-color: #6b7280;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            background-color: var(--background-color);
+            background-image: url('https://images.guns.lol/Lbsfh.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            image-rendering: high-quality;
+            color: var(--text-color);
+            font-family: "Inter", sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        body.matrix-active {
+            background-image: none;
+        }
+
+        .terminal {
+            width: 800px;
+            height: 600px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            z-index: 1;
+            background-color: rgba(30, 22, 25, 0.5);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        :root[data-theme="light"] .terminal {
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+
+        .content-area {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        header.topbar {
+            height: 32px;
+            border-bottom: 1px solid var(--border-color);
+            padding: 0 5px;
+            align-items: center;
+            display: flex;
+            user-select: none;
+            position: relative;
+            background-color: var(--background-color);
+        }
+
+        .title {
+            font-size: 12px;
+            color: var(--text-color);
+            letter-spacing: 0.4px;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .version {
+            font-size: 10px;
+            color: var(--secondary-text-color);
+        }
+
+        .buttons {
+            display: flex;
+            gap: 6px;
+            margin-left: auto;
+        }
+
+        .button {
+            font-size: 11px;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            border: 1px solid var(--border-color);
+            padding: 1px 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 20px;
+            min-width: 20px;
+        }
+
+        .button i {
+            width: 12px;
+            height: 12px;
+        }
+
+        #theme-toggle i {
+            width: 16px;
+            height: 16px;
+        }
+
+        #theme-icon {
+            width: 16px;
+            height: 16px;
+        }
+
+        .button:hover {
+            background-color: var(--border-color);
+        }
+
+        :root[data-theme="light"] .button:hover {
+            background-color: #e5e7eb;
+        }
+
+        .content {
+            flex: 1;
+            padding: 8px 10px;
+            font-size: 13px;
+            line-height: 1.6;
+            overflow-y: auto;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .content::-webkit-scrollbar-track {
+            background: var(--background-color);
+        }
+
+        .content::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 3px;
+        }
+
+        .content::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-color);
+        }
+
+        footer.footer {
+            height: 24px;
+            border-top: 1px solid var(--border-color);
+            padding: 0 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 10px;
+            color: var(--secondary-text-color);
+            background-color: var(--background-color);
+        }
+
+        .content pre,
+        .content canvas {
+            width: 100%;
+            max-width: 800px;
+            overflow: hidden;
+            font-size: 10px;
+            line-height: 10px;
+        }
+
+        .line {
+            display: inline-flex;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .prompt {
+            color: var(--accent-color);
+            margin-right: 5px;
+            font-weight: 500;
+        }
+
+        .accent {
+            color: var(--accent-color);
+            margin-right: 5px;
+        }
+
+        .input-container {
+            display: inline-flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .input {
+            outline: none;
+            color: var(--text-color);
+            font-family: inherit;
+            white-space: pre;
+            caret-color: transparent;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: auto;
+            background: none;
+            color: var(--accent-color);
+            animation: blink 1s steps(2, start) infinite;
+            margin-left: 1px;
+        }
+
+        .cursor::after {
+            content: "_";
+        }
+
+        .char-count {
+            font-size: 10px;
+            color: var(--secondary-text-color);
+            margin-left: 6px;
+            user-select: none;
+        }
+
+        .icon-hand-heart {
+            width: 16px;
+            height: 16px;
+            vertical-align: middle;
+            image-rendering: pixelated;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(26, 19, 22, 0.85);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        :root[data-theme="light"] .modal {
+            background-color: rgba(245, 245, 245, 0.9);
+        }
+
+        .modal-topbar {
+            height: 32px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 5px;
+            background-color: var(--background-color);
+        }
+
+        .modal-window {
+            width: 400px;
+            max-width: 90%;
+            border: 1px solid var(--border-color);
+            background-color: var(--background-color);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-title {
+            font-size: 12px;
+            color: var(--text-color);
+            letter-spacing: 0.4px;
+            text-align: center;
+            flex: 1;
+            user-select: none;
+        }
+
+        .modal-window .button {
+            font-size: 11px;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            border: 1px solid var(--border-color);
+            padding: 1px 6px;
+            cursor: pointer;
+            height: 20px;
+            min-width: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            padding: 10px;
+            font-size: 13px;
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            overflow: hidden;
+        }
+
+        #lucide-modal .modal-content {
+            gap: 10px;
+        }
+
+        .settings-tabs {
+            display: flex;
+            gap: 5px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .tab-btn {
+            padding: 6px 12px;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .tab-btn.active {
+            background: var(--accent-color);
+            color: var(--background-color);
+        }
+
+        .tab-content {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .tab-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .tab-content::-webkit-scrollbar-track {
+            background: var(--background-color);
+        }
+
+        .tab-content::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 3px;
+        }
+
+        .tab-content::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-color);
+        }
+
+        .tab-content.hidden {
+            display: none;
+        }
+
+        .cmd-item {
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            background-color: var(--background-color);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-radius: 2px;
+        }
+
+        .cmd-item:hover {
+            background-color: #2a1f23;
+            border-color: var(--accent-color);
+        }
+
+        :root[data-theme="light"] .cmd-item:hover {
+            background-color: #f3f4f6;
+        }
+
+        .cmd-name {
+            font-weight: 600;
+            color: var(--accent-color);
+            font-size: 13px;
+            margin-bottom: 4px;
+        }
+
+        .cmd-desc {
+            font-size: 11px;
+            color: var(--secondary-text-color);
+            line-height: 1.4;
+        }
+
+        .cmd-detail {
+            display: none;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid var(--border-color);
+            font-size: 11px;
+            color: var(--text-color);
+            line-height: 1.5;
+        }
+
+        .cmd-item.expanded .cmd-detail {
+            display: block;
+        }
+
+        .cmd-item.expanded {
+            background-color: #2a1f23;
+        }
+
+        :root[data-theme="light"] .cmd-item.expanded {
+            background-color: #f3f4f6;
+        }
+
+        .user-id {
+            font-size: 10px;
+            color: var(--secondary-text-color);
+        }
+
+        .link-container {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 8px;
+            padding: 6px 12px;
+            min-width: 150px;
+            height: auto;
+            border: 1px solid var(--border-color);
+            background-color: var(--background-color);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex-direction: row;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .link-container:visited {
+            color: inherit;
+        }
+
+        .link-container:hover {
+            background-color: #2a1f23;
+            border-color: var(--accent-color);
+        }
+
+        :root[data-theme="light"] .link-container:hover {
+            background-color: #f3f4f6;
+        }
+
+        .github-logo,
+        .lucide-logo,
+        .guns-logo {
+            width: 20px;
+            height: 20px;
+        }
+
+        .credits-section {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .credits-section-title {
+            font-size: 11px;
+            color: var(--secondary-text-color);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .link-text-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .link-text {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .link-subtext {
+            font-size: 10px;
+            color: var(--secondary-text-color);
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
             }
 
-            :root  {
-                --background-color: #1a1316;
-                --text-color: #eae6e1;
-                --accent-color: #e5b97f;
+            50% {
+                opacity: 0;
             }
+        }
+    </style>
+</head>
 
-            body {
-                background-color: var(--background-color);
-                color: var(--text-color);
-                font-family: "JetBrains Mono", monospace;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                height: 100vh;
-            }
-
-            .terminal {
-                width: 800px;
-                height: 600px;
-                border: 1px solid #2a2024;
-                display: flex;
-                flex-direction: column;
-                z-index: 1;
-
-                background-color: rgba(30, 22, 25, 0.6);
-                backdrop-filter: blur(12px);
-                -webkit-backdrop-filter: blur(12px);
-            }
-
-            .topbar {
-                height: 32px;
-                border-bottom: 1px solid #2a2024;
-                padding: 0 5px;
-                align-items: center;
-                display: flex;
-                user-select: none;
-                position: relative;
-                background-color: #1e1619;
-            }
-
-            .title {
-                font-size: 12px;
-                color: #d8d3ce;
-                letter-spacing: 0.4px;
-                position: absolute;
-                left: 50%;
-                transform: translateX(-50%);
-            }
-
-            .version {
-                font-size: 10px;
-                color: #7a7276;
-            }
-
-            .buttons {
-                display: flex;
-                gap: 6px;
-                margin-left: auto;
-            }
-
-            .button {
-                font-size: 12px;
-                color: #d8d3ce;
-                background-color: #1e1619;
-                border: 1px solid #2a2024;
-                padding: 3px 10px;
-                cursor: pointer;
-            }
-
-            .content {
-                flex: 1;
-                padding: 8px 10px;
-                font-size: 13px;
-                line-height: 1.6;
-                overflow: hidden;
-                display: flex;
-                flex-direction: column;
-            }
-
-            .content pre, .content canvas {
-                width: 100%;
-                max-width: 800px;
-                overflow: hidden;
-                font-size: 10px;
-                line-height: 10px;
-            }
-
-            .line {
-                display: inline-flex;
-                flex-wrap: wrap;
-                align-items: center;
-            }
-
-            .prompt {
-                color: var(--accent-color);
-                margin-right: 5px;
-                font-weight: 500;
-            }
-
-            .accent {
-                color: var(--accent-color);
-                margin-right: 5px;
-            }
-
-            .input-container {
-                display: inline-flex;
-                align-items: center;
-                position: relative;
-            }
-
-            .input {
-                outline: none;
-                color: var(--text-color);
-                font-family: inherit;
-                white-space: pre;
-                caret-color: transparent;
-            }
-
-            .cursor {
-                display: inline-block;
-                width: auto;
-                background: none;
-                color: var(--accent-color);
-                animation: blink 1s steps(2, start) infinite;
-                margin-left: 1px;
-            }
-
-            .cursor::after {
-                content: "_";
-            }
-
-            .char-count {
-                font-size: 10px;
-                color: #7a7276;
-                margin-left: 6px;
-                user-select: none;
-            }
-
-            /* Icons */
-            .icon-cog {
-                width: 16px;
-                height: 16px;
-                vertical-align: middle;
-                image-rendering: pixelated;
-            }
-
-            .icon-hand-heart {
-                width: 16px;
-                height: 16px;
-                vertical-align: middle;
-                image-rendering: pixelated;
-            }
-
-            .modal {
-                position: fixed;
-                top: 0; left: 0;
-                width: 100%;
-                height: 100%;
-                background-color: rgba(26, 19, 22, 0.85);
-                display: none;
-                justify-content: center;
-                align-items: center;
-                z-index: 9999;
-            }
-
-            .modal-topbar {
-                height: 32px;
-                border-bottom: 1px solid #2a2024;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                padding: 0 5px;
-                background-color: #1e1619;
-            }
-
-            .modal-window {
-                width: 400px;
-                max-width: 90%;
-                border: 1px solid #2a2024;
-                background-color: #1a1316;
-                display: flex;
-                flex-direction: column;
-            }
-
-            .modal-title {
-                font-size: 12px;
-                color: #d8d3ce;
-                letter-spacing: 0.4px;
-                text-align: center;
-                flex: 1;
-                user-select: none;
-            }
-
-            .modal-window .button {
-                font-size: 12px;
-                color: #d8d3ce;
-                background-color: #1e1619;
-                border: 1px solid #2a2024;
-                padding: 3px 10px;
-                cursor: pointer;
-            }
-
-            .modal-content {
-                padding: 10px;
-                font-size: 13px;
-                color: #eae6e1;
-                display: flex;
-                flex-direction: column;
-                gap: 4px;
-            }
-
-            .user-id {
-                font-size: 10px;
-                color: #7a7276;
-            }
-
-            .link-container {
-                display: flex;
-                align-items: center;
-                justify-content: flex-start;
-                gap: 8px;
-                padding: 6px 12px;
-                min-width: 150px;
-                height: auto;
-                border: 1px solid #2a2024;
-                background-color: #1e1619;
-                cursor: pointer;
-                transition: all 0.2s ease;
-                flex-direction: row;
-            }
-
-            .link-container:hover {
-                background-color: #2a1f23;
-                border-color: var(--accent-color);
-            }
-
-            .github-logo {
-                width: 20px;
-                height: 20px;
-            }
-
-            .link-text-wrapper {
-                display: flex;
-                flex-direction: column;
-                gap: 2px;
-            }
-
-            .link-text {
-                font-size: 13px;
-                font-weight: 500;
-                color: #eae6e1;
-            }
-
-            .link-subtext {
-                font-size: 10px;
-                color: #7a7276;
-            }
-
-            @keyframes blink {
-                0%, 100% {
-                    opacity: 1;
-                }
-
-                50% {
-                    opacity: 0;
-                }
-            }
-        </style>
-    </head>
-
-    <body>
-        <div class="terminal">
-            <div class="topbar">
-                <div class="title"># Miraii <span class="version">v1.0.0</span></div>
-
-                <div class="buttons">
-                    <div class="button" id="credits-button">
-                        <i data-lucide="hand-heart" class="icon-hand-heart"></i>
-                    </div>
-
-                    <div class="button">
-                        <i data-lucide="cog" class="icon-cog"></i>
-                    </div>
-                </div>
+<body>
+    <div class="terminal">
+        <header class="topbar">
+            <div class="title"># Miraii <span class="version">v3</span></div>
+            <div class="buttons">
+                <button class="button" id="theme-toggle" title="Toggle theme">
+                    <i data-lucide="sun" id="theme-icon"></i>
+                </button>
+                <button class="button" id="credits-button">
+                    <i data-lucide="hand-heart" class="icon-hand-heart"></i>
+                </button>
             </div>
-
+        </header>
+        <div class="content-area">
             <div class="content">
                 <div class="line">
                     <span class="prompt">miraii@terminal</span>
                     <span class="accent">~/</span>
-
                     <span class="input-container">
                         <span class="input" contenteditable="true" autofocus></span>
                         <span class="cursor"></span>
@@ -313,230 +557,691 @@
                 </div>
             </div>
         </div>
-
-        <div class="modal" id="credits-modal">
-            <div class="modal-window">
-                <div class="modal-topbar">
-                    <div class="modal-title"># Credits</div>
-
-                    <div class="buttons">
-                        <div class="button" id="close-modal">x</div>
+        <footer class="footer">
+            <span>Version 3</span>
+            <span>ID: X0X0</span>
+        </footer>
+    </div>
+    <div class="modal" id="credits-modal">
+        <div class="modal-window">
+            <div class="modal-topbar">
+                <div class="modal-title"># Credits</div>
+                <div class="buttons">
+                    <button class="button" id="close-modal">x</button>
+                </div>
+            </div>
+            <div class="modal-content">
+                <p>Made by Miraii <span class="user-id">(@844900332303024128)</span></p>
+                <a href="#" class="link-container" target="_blank" rel="noopener noreferrer">
+                    <img src="https://icon.icepanel.io/Technology/png-shadow-512/GitHub.png" class="github-logo"
+                        alt="GitHub">
+                    <div class="link-text-wrapper">
+                        <span class="link-text">Github</span>
+                        <span class="link-subtext">Github Pages</span>
+                    </div>
+                </a>
+                <div class="credits-section">
+                    <div class="credits-section-title">Libraries & Resources</div>
+                    <div class="link-container" id="lucide-modal-button" style="cursor: pointer;">
+                        <img src="https://lucide.dev/logo.dark.svg" class="lucide-logo" id="lucide-logo" alt="Lucide">
+                        <div class="link-text-wrapper">
+                            <span class="link-text">Lucide</span>
+                            <span class="link-subtext">Icon Library</span>
+                        </div>
+                    </div>
+                    <a href="https://guns.lol/fr" class="link-container" target="_blank" rel="noopener noreferrer">
+                        <img src="https://assets.guns.lol/guns_logo_no_background_cropped_xmas.png" class="guns-logo"
+                            alt="Guns.lol">
+                        <div class="link-text-wrapper">
+                            <span class="link-text">Guns.lol</span>
+                            <span class="link-subtext">Website</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="lucide-modal">
+        <div class="modal-window">
+            <div class="modal-topbar">
+                <div class="modal-title"># Lucide</div>
+                <div class="buttons">
+                    <button class="button" id="close-lucide-modal">x</button>
+                </div>
+            </div>
+            <div class="modal-content">
+                <p>Lucide is a beautiful & consistent icon toolkit made by the community.</p>
+                <a href="https://lucide.dev" class="link-container" target="_blank" rel="noopener noreferrer">
+                    <img src="https://lucide.dev/logo.dark.svg" class="lucide-logo" id="lucide-modal-logo" alt="Lucide">
+                    <div class="link-text-wrapper">
+                        <span class="link-text">Lucide Website</span>
+                        <span class="link-subtext">Official Website</span>
+                    </div>
+                </a>
+                <a href="https://github.com/lucide-icons" class="link-container" target="_blank"
+                    rel="noopener noreferrer">
+                    <img src="https://icon.icepanel.io/Technology/png-shadow-512/GitHub.png" class="github-logo"
+                        alt="GitHub">
+                    <div class="link-text-wrapper">
+                        <span class="link-text">Lucide GitHub</span>
+                        <span class="link-subtext">Source Code</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="help-modal">
+        <div class="modal-window">
+            <div class="modal-topbar">
+                <div class="modal-title"># Help</div>
+                <div class="buttons">
+                    <button class="button" id="close-help">x</button>
+                </div>
+            </div>
+            <div class="modal-content">
+                <div class="settings-tabs">
+                    <button class="tab-btn active" data-tab="basic">Basic</button>
+                    <button class="tab-btn" data-tab="fun">Fun</button>
+                </div>
+                <div class="tab-content" id="basic-tab">
+                    <div class="cmd-item" data-cmd="help">
+                        <div class="cmd-name">help</div>
+                        <div class="cmd-desc">Show this help menu</div>
+                        <div class="cmd-detail">Opens the help modal displaying all available commands. You can browse
+                            commands by category and click on any command to see detailed information.</div>
+                    </div>
+                    <div class="cmd-item" data-cmd="clear">
+                        <div class="cmd-name">clear</div>
+                        <div class="cmd-desc">Clear the terminal screen</div>
+                        <div class="cmd-detail">Removes all previous command outputs from the terminal, leaving only the
+                            current input line. This helps keep the terminal clean and organized.</div>
+                    </div>
+                    <div class="cmd-item" data-cmd="echo">
+                        <div class="cmd-name">echo &lt;text&gt;</div>
+                        <div class="cmd-desc">Display the given text</div>
+                        <div class="cmd-detail">Prints the text you provide after the command. Example: "echo Hello
+                            World" will display "Hello World" in the terminal.</div>
+                    </div>
+                    <div class="cmd-item" data-cmd="date">
+                        <div class="cmd-name">date</div>
+                        <div class="cmd-desc">Show current date and time</div>
+                        <div class="cmd-detail">Displays the current date and time in a readable format. The output
+                            includes the full date, time, and timezone information.</div>
                     </div>
                 </div>
-
-                <div class="modal-content">
-                    <p>Made by Miraii <span class="user-id">(@844900332303024128)</span></p>
-
-                    <div class="link-container">
-                        <img src="https://icon.icepanel.io/Technology/png-shadow-512/GitHub.png" class="github-logo" alt="GitHub">
-
-                        <div class="link-text-wrapper">
-                            <span class="link-text">Github</span>
-                            <span class="link-subtext">Github Pages</span>
-                        </div>
+                <div class="tab-content hidden" id="fun-tab">
+                    <div class="cmd-item" data-cmd="matrix">
+                        <div class="cmd-name">matrix</div>
+                        <div class="cmd-desc">Activate matrix effect (toggle)</div>
+                        <div class="cmd-detail">Toggles a Matrix-style falling character animation in the background.
+                            Run the command again to turn it off. The effect uses Japanese characters and numbers.</div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        (async () => {
+            'use strict';
 
-        <script src="https://unpkg.com/lucide@latest"></script>
-
-        <script id="char-handler">
-            const input = document.querySelector(".input");
-            const char_count = document.querySelector(".char-count");
-            const content = document.querySelector(".content");
-            const max_chars = 45;
-
-            const commands = {
-                help: "Current Commands: help, logs, matrix.",
-                logs: "Redirect To Weekly Logs."
+            // Wait for DOM and Lucide to be ready
+            const waitForLucide = () => {
+                return new Promise((resolve) => {
+                    if (typeof lucide !== 'undefined' && lucide.createIcons) {
+                        resolve();
+                    } else {
+                        const checkInterval = setInterval(() => {
+                            if (typeof lucide !== 'undefined' && lucide.createIcons) {
+                                clearInterval(checkInterval);
+                                resolve();
+                            }
+                        }, 10);
+                    }
+                });
             };
 
-            input.addEventListener("input", () => {
-                if (input.textContent.length > max_chars) {
-                    input.textContent = input.textContent.slice(0, max_chars);
+            try {
+                await waitForLucide();
 
-                    place_caret_end(input);
+                const input = document.querySelector(".input");
+                const char_count = document.querySelector(".char-count");
+                const content = document.querySelector(".content");
+                const root = document.documentElement;
+                const max_chars = 45;
+
+                if (!input || !char_count || !content) {
+                    throw new Error("Required DOM elements not found");
                 }
 
-                char_count.textContent = `${input.textContent.length}/${max_chars}`;
-            });
+                const commands = {
+                    help: "Available Commands: help, matrix, clear, echo <text>, date.",
+                    clear: "Clear the terminal screen.",
+                    echo: "Echo the given text.",
+                    date: "Display current date and time."
+                };
 
-            input.addEventListener("keydown", (_) => {
-                if (_.key === "Enter") {
-                    _.preventDefault();
-                    execute(input.textContent.trim());
+                let no_matrix = null;
 
-                    input.textContent = "";
-                    char_count.textContent = `0/${max_chars}`;
-                }
-
-                if (_.key === "Backspace") {
-                    _.preventDefault();
-
-                    const text = input.textContent;
-
-                    input.textContent = text.slice(0, text.length - 1);
-                    place_caret_end(input);
-                    char_count.textContent = `${input.textContent.length}/${max_chars}`;
-                }
-            })
-
-            document.addEventListener("click", (event) => {
-                if (
-                    event.target.closest(".button") ||
-                    event.target.closest(".modal") ||
-                    event.target.closest(".link-container")
-                ) {
-                    return;
-                }
-
-                input.focus();
-                place_caret_end(input);
-            });
-
-            // Helpers:
-            function place_caret_end(element) {
-                const range = document.createRange();
-                const select = window.getSelection();
-
-                range.selectNodeContents(element);
-                range.collapse(false);
-                select.removeAllRanges();
-                select.addRange(range);
-            }
-
-            let no_matrix = null;
-
-            function execute(raw_command) {
-                const command = raw_command.toLowerCase().trim().replace(/^command\s+/, "");
-
-                const line = document.createElement("div");
-                const prompt = document.createElement("span");
-                const accent = document.createElement("span");
-                const output = document.createElement("span");
-
-                line.className = "line";
-                prompt.className = "prompt";
-                prompt.textContent = "miraii@terminal";
-                accent.className = "accent";
-                accent.textContent = "~/";
-                output.style.marginLeft = "5px";
-
-                if (command === "logs") {
-                    setTimeout(() => {
-                        window.location.href = "logs.html";
-                    }, 500);
-
-                    return;
-                }
-
-                if (command === "matrix") {
-                    if (!no_matrix) {
-                        no_matrix = matrix();
-                        output.textContent = "Matrix !!!";
-                    } else {
-                        no_matrix();
-                        no_matrix = null;
-                        output.textContent = "Stopped.";
+                function place_caret_end(element) {
+                    try {
+                        if (!element) return;
+                        const range = document.createRange();
+                        const select = window.getSelection();
+                        if (!select) return;
+                        range.selectNodeContents(element);
+                        range.collapse(false);
+                        select.removeAllRanges();
+                        select.addRange(range);
+                    } catch (error) {
+                        console.error("Error placing caret:", error);
                     }
-
-                    line.appendChild(prompt);
-                    line.appendChild(accent);
-                    line.appendChild(output);
-                    content.appendChild(line);
-                    content.scrollTop = content.scrollHeight;
-
-                    return;
                 }
 
-                output.textContent = commands[command] || `The Command '${command}' Wasn't Found !`;
-
-                line.appendChild(prompt);
-                line.appendChild(accent);
-                line.appendChild(output);
-                content.appendChild(line);
-
-                content.scrollTop = content.scrollHeight;
-            }
-
-            function matrix() {
-                const canvas = document.createElement("canvas");
-                const context = canvas.getContext("2d");
-                const terminal = document.querySelector(".terminal");
-
-                canvas.id = "matrix_background";
-                document.body.appendChild(canvas)
-
-                canvas.style.position = "fixed";
-                canvas.style.top = 0;
-                canvas.style.left = 0;
-                canvas.style.width = "100%";
-                canvas.style.height = "100%";
-                canvas.style.zIndex = -9999;
-                canvas.style.pointerEvents = "none";
-
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-
-                const letters = "ミレイミレイミレイMIRAI010101".split("");
-                const font_size = 14;
-                const columns = canvas.width / font_size;
-                const drops = Array(Math.floor(columns)).fill(1);
-
-                function draw() {
-                    context.fillStyle = "rgba(26, 19, 22, 0.05)";
-                    context.fillRect(0, 0, canvas.width, canvas.height);
-                    context.fillStyle = "#e5b97f";
-                    context.font = font_size + "px JetBrains Mono";
-
-                    for (let i = 0; i < drops.length; i++) {
-                        const text = letters[Math.floor(Math.random() * letters.length)];
-
-                        context.fillText(text, i * font_size, drops[i] * font_size);
-
-                        if (drops[i] * font_size > canvas.height && Math.random() > 0.975) {
-                            drops[i] = 0;
+                function matrix() {
+                    try {
+                        const canvas = document.createElement("canvas");
+                        const context = canvas.getContext("2d");
+                        if (!context) {
+                            throw new Error("Canvas context not available");
                         }
 
-                        drops[i]++;
+                        canvas.id = "matrix_background";
+                        document.body.appendChild(canvas);
+                        document.body.classList.add("matrix-active");
+
+                        canvas.style.position = "fixed";
+                        canvas.style.top = "0";
+                        canvas.style.left = "0";
+                        canvas.style.width = "100%";
+                        canvas.style.height = "100%";
+                        canvas.style.zIndex = "-9999";
+                        canvas.style.pointerEvents = "none";
+
+                        const resizeCanvas = () => {
+                            canvas.width = window.innerWidth;
+                            canvas.height = window.innerHeight;
+                        };
+                        resizeCanvas();
+
+                        const letters = "ミレイミレイミレイMIRAII010101".split("");
+                        const font_size = 14;
+                        const columns = Math.floor(canvas.width / font_size);
+                        const drops = Array(columns).fill(1);
+
+                        function draw() {
+                            try {
+                                const current_theme = root.getAttribute("data-theme") || "dark";
+                                const bg_color = current_theme === "light" ? "rgba(245, 245, 245, 0.05)" : "rgba(26, 19, 22, 0.05)";
+                                const text_color = current_theme === "light" ? "#d97706" : "#e5b97f";
+
+                                context.fillStyle = bg_color;
+                                context.fillRect(0, 0, canvas.width, canvas.height);
+                                context.fillStyle = text_color;
+                                context.font = `${font_size}px Inter`;
+
+                                for (let i = 0; i < drops.length; i++) {
+                                    const text = letters[Math.floor(Math.random() * letters.length)];
+                                    context.fillText(text, i * font_size, drops[i] * font_size);
+                                    if (drops[i] * font_size > canvas.height && Math.random() > 0.975) {
+                                        drops[i] = 0;
+                                    }
+                                    drops[i]++;
+                                }
+                            } catch (error) {
+                                console.error("Error drawing matrix:", error);
+                            }
+                        }
+
+                        const interval = setInterval(draw, 40);
+                        const resizeHandler = () => resizeCanvas();
+                        window.addEventListener("resize", resizeHandler);
+
+                        return () => {
+                            try {
+                                clearInterval(interval);
+                                window.removeEventListener("resize", resizeHandler);
+                                canvas.remove();
+                                document.body.classList.remove("matrix-active");
+                            } catch (error) {
+                                console.error("Error cleaning up matrix:", error);
+                            }
+                        };
+                    } catch (error) {
+                        console.error("Error initializing matrix:", error);
+                        return () => { };
                     }
                 }
 
-                const interval = setInterval(draw, 40);
+                function execute(raw_command) {
+                    try {
+                        const command = raw_command.toLowerCase().trim().replace(/^command\s+/, "");
+                        const line = document.createElement("div");
+                        const prompt = document.createElement("span");
+                        const accent = document.createElement("span");
+                        const output = document.createElement("span");
 
-                window.addEventListener("resize", () => {
-                    canvas.width = window.innerWidth;
-                    canvas.height = window.innerHeight;
+                        line.className = "line";
+                        prompt.className = "prompt";
+                        prompt.textContent = "miraii@terminal";
+                        accent.className = "accent";
+                        accent.textContent = "~/";
+                        output.style.marginLeft = "5px";
+
+                        if (command === "matrix") {
+                            if (!no_matrix) {
+                                no_matrix = matrix();
+                                output.textContent = "Matrix effect activated! Press matrix again to stop.";
+                            } else {
+                                no_matrix();
+                                no_matrix = null;
+                                output.textContent = "Matrix effect stopped.";
+                            }
+                            line.appendChild(prompt);
+                            line.appendChild(accent);
+                            line.appendChild(output);
+                            content.appendChild(line);
+                            content.scrollTop = content.scrollHeight;
+                            return;
+                        }
+
+                        if (command === "clear") {
+                            const children = Array.from(content.children);
+                            let input_line = null;
+                            for (let i = children.length - 1; i >= 0; i--) {
+                                if (children[i].querySelector(".input-container")) {
+                                    input_line = children[i];
+                                    break;
+                                }
+                            }
+                            children.forEach(child => {
+                                try {
+                                    content.removeChild(child);
+                                } catch (e) {
+                                    // Ignore if already removed
+                                }
+                            });
+
+                            if (input_line) {
+                                content.appendChild(input_line);
+                                const input_el = input_line.querySelector(".input");
+                                if (input_el) {
+                                    input_el.focus();
+                                    place_caret_end(input_el);
+                                }
+                            } else {
+                                const new_input_line = document.createElement("div");
+                                new_input_line.className = "line";
+                                const prompt_span = document.createElement("span");
+                                prompt_span.className = "prompt";
+                                prompt_span.textContent = "miraii@terminal";
+                                const accent_span = document.createElement("span");
+                                accent_span.className = "accent";
+                                accent_span.textContent = "~/";
+                                const input_container = document.createElement("span");
+                                input_container.className = "input-container";
+                                const input_span = document.createElement("span");
+                                input_span.className = "input";
+                                input_span.contentEditable = "true";
+                                const cursor_span = document.createElement("span");
+                                cursor_span.className = "cursor";
+                                const char_count_span = document.createElement("span");
+                                char_count_span.className = "char-count";
+                                char_count_span.textContent = "0/45";
+
+                                input_container.appendChild(input_span);
+                                input_container.appendChild(cursor_span);
+                                input_container.appendChild(char_count_span);
+                                new_input_line.appendChild(prompt_span);
+                                new_input_line.appendChild(accent_span);
+                                new_input_line.appendChild(input_container);
+                                content.appendChild(new_input_line);
+                                input_span.focus();
+                                place_caret_end(input_span);
+                            }
+                            return;
+                        }
+
+                        if (command.startsWith("echo ")) {
+                            const text = command.slice(5);
+                            output.textContent = text;
+                        } else if (command === "date") {
+                            const now = new Date();
+                            const options = {
+                                weekday: "long",
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                second: "2-digit",
+                                timeZoneName: "short"
+                            };
+                            output.textContent = now.toLocaleString("en-US", options);
+                        } else if (command === "help") {
+                            const helpModal = document.getElementById("help-modal");
+                            if (helpModal) {
+                                helpModal.style.display = "flex";
+                            }
+                            return;
+                        } else {
+                            output.textContent = commands[command] || `Command '${command}' not found. Type 'help' for available commands.`;
+                        }
+
+                        line.appendChild(prompt);
+                        line.appendChild(accent);
+                        line.appendChild(output);
+                        const last_line = content.lastElementChild;
+                        if (last_line) {
+                            content.insertBefore(line, last_line);
+                        } else {
+                            content.appendChild(line);
+                        }
+                        content.scrollTop = content.scrollHeight;
+                    } catch (error) {
+                        console.error("Error executing command:", error);
+                    }
+                }
+
+                // Event listeners
+                input.addEventListener("input", () => {
+                    try {
+                        if (input.textContent.length > max_chars) {
+                            input.textContent = input.textContent.slice(0, max_chars);
+                            place_caret_end(input);
+                        }
+                        char_count.textContent = `${input.textContent.length}/${max_chars}`;
+                    } catch (error) {
+                        console.error("Error handling input:", error);
+                    }
                 });
 
-                return () => {
-                    clearInterval(interval);
-                    canvas.remove();
-                };
+                input.addEventListener("keydown", (e) => {
+                    try {
+                        if (e.key === "Enter") {
+                            e.preventDefault();
+                            execute(input.textContent.trim());
+                            input.textContent = "";
+                            char_count.textContent = `0/${max_chars}`;
+                        }
+                        if (e.key === "Backspace") {
+                            e.preventDefault();
+                            const text = input.textContent;
+                            input.textContent = text.slice(0, text.length - 1);
+                            place_caret_end(input);
+                            char_count.textContent = `${input.textContent.length}/${max_chars}`;
+                        }
+                    } catch (error) {
+                        console.error("Error handling keydown:", error);
+                    }
+                });
+
+                document.addEventListener("click", (event) => {
+                    try {
+                        if (event.target.closest(".button") || event.target.closest(".modal") || event.target.closest(".link-container")) {
+                            return;
+                        }
+                        input.focus();
+                        place_caret_end(input);
+                    } catch (error) {
+                        console.error("Error handling click:", error);
+                    }
+                });
+
+                // Initialize icons
+                lucide.createIcons();
+            } catch (error) {
+                console.error("Error initializing terminal:", error);
             }
+        })();
+    </script>
+    <script>
+        (async () => {
+            'use strict';
 
-            lucide.createIcons();
-        </script>
+            const waitForLucide = () => {
+                return new Promise((resolve) => {
+                    if (typeof lucide !== 'undefined' && lucide.createIcons) {
+                        resolve();
+                    } else {
+                        const checkInterval = setInterval(() => {
+                            if (typeof lucide !== 'undefined' && lucide.createIcons) {
+                                clearInterval(checkInterval);
+                                resolve();
+                            }
+                        }, 10);
+                    }
+                });
+            };
 
-        <script>
-            const credits_button = document.getElementById("credits-button");
-            const modal = document.getElementById("credits-modal");
-            const close_button = document.getElementById("close-modal");
+            try {
+                await waitForLucide();
 
-            credits_button.addEventListener("click", () => {
-                modal.style.display = "flex";
-            });
+                const root = document.documentElement;
+                const theme_toggle = document.getElementById("theme-toggle");
+                const theme_icon = document.getElementById("theme-icon");
 
-            close_button.addEventListener("click", () => {
-                modal.style.display = "none";
-            });
-
-            modal.addEventListener("click", (event) => {
-                if (event.target === modal) {
-                    modal.style.display = "none";
+                if (!theme_toggle || !theme_icon) {
+                    throw new Error("Theme elements not found");
                 }
-            });
-        </script>
-    </body>
+
+                function update_theme_icon(theme) {
+                    try {
+                        if (!theme_icon) return;
+                        const existing_svg = theme_icon.querySelector("svg");
+                        if (existing_svg) {
+                            existing_svg.remove();
+                        }
+                        if (theme === "light") {
+                            theme_icon.setAttribute("data-lucide", "moon");
+                        } else {
+                            theme_icon.setAttribute("data-lucide", "sun");
+                        }
+                        lucide.createIcons({ container: theme_icon });
+                    } catch (error) {
+                        console.error("Error updating theme icon:", error);
+                    }
+                }
+
+                function update_lucide_logo(theme) {
+                    try {
+                        const lucide_logo = document.getElementById("lucide-logo");
+                        const lucide_modal_logo = document.getElementById("lucide-modal-logo");
+
+                        if (lucide_logo) {
+                            lucide_logo.src = theme === "light"
+                                ? "https://lucide.dev/logo.light.svg"
+                                : "https://lucide.dev/logo.dark.svg";
+                        }
+                        if (lucide_modal_logo) {
+                            lucide_modal_logo.src = theme === "light"
+                                ? "https://lucide.dev/logo.light.svg"
+                                : "https://lucide.dev/logo.dark.svg";
+                        }
+                    } catch (error) {
+                        console.error("Error updating lucide logo:", error);
+                    }
+                }
+
+                // Initialize theme
+                const saved_theme = localStorage.getItem("theme") || "dark";
+                root.setAttribute("data-theme", saved_theme);
+                update_theme_icon(saved_theme);
+                update_lucide_logo(saved_theme);
+
+                // Theme toggle handler
+                theme_toggle.addEventListener("click", () => {
+                    try {
+                        const current_theme = root.getAttribute("data-theme") || "dark";
+                        const new_theme = current_theme === "light" ? "dark" : "light";
+                        root.setAttribute("data-theme", new_theme);
+                        localStorage.setItem("theme", new_theme);
+                        update_theme_icon(new_theme);
+                        update_lucide_logo(new_theme);
+                    } catch (error) {
+                        console.error("Error toggling theme:", error);
+                    }
+                });
+
+                // Credits modal
+                const credits_button = document.getElementById("credits-button");
+                const modal = document.getElementById("credits-modal");
+                const close_button = document.getElementById("close-modal");
+
+                if (credits_button && modal && close_button) {
+                    credits_button.addEventListener("click", () => {
+                        try {
+                            modal.style.display = "flex";
+                        } catch (error) {
+                            console.error("Error opening credits modal:", error);
+                        }
+                    });
+
+                    close_button.addEventListener("click", () => {
+                        try {
+                            modal.style.display = "none";
+                        } catch (error) {
+                            console.error("Error closing credits modal:", error);
+                        }
+                    });
+
+                    modal.addEventListener("click", (event) => {
+                        try {
+                            if (event.target === modal) {
+                                modal.style.display = "none";
+                            }
+                        } catch (error) {
+                            console.error("Error handling modal click:", error);
+                        }
+                    });
+                }
+
+                // Lucide modal
+                const lucide_modal_button = document.getElementById("lucide-modal-button");
+                const lucide_modal = document.getElementById("lucide-modal");
+                const close_lucide_modal = document.getElementById("close-lucide-modal");
+
+                if (lucide_modal_button && lucide_modal && close_lucide_modal) {
+                    lucide_modal_button.addEventListener("click", () => {
+                        try {
+                            lucide_modal.style.display = "flex";
+                        } catch (error) {
+                            console.error("Error opening lucide modal:", error);
+                        }
+                    });
+
+                    close_lucide_modal.addEventListener("click", () => {
+                        try {
+                            lucide_modal.style.display = "none";
+                        } catch (error) {
+                            console.error("Error closing lucide modal:", error);
+                        }
+                    });
+
+                    lucide_modal.addEventListener("click", (event) => {
+                        try {
+                            if (event.target === lucide_modal) {
+                                lucide_modal.style.display = "none";
+                            }
+                        } catch (error) {
+                            console.error("Error handling lucide modal click:", error);
+                        }
+                    });
+                }
+
+                // Help modal
+                const help_modal = document.getElementById("help-modal");
+                const close_help = document.getElementById("close-help");
+                const help_tab_btns = document.querySelectorAll("#help-modal .tab-btn");
+                const help_tab_contents = document.querySelectorAll("#help-modal .tab-content");
+                const input = document.querySelector(".input");
+
+                function place_caret_end(element) {
+                    try {
+                        if (!element) return;
+                        const range = document.createRange();
+                        const select = window.getSelection();
+                        if (!select) return;
+                        range.selectNodeContents(element);
+                        range.collapse(false);
+                        select.removeAllRanges();
+                        select.addRange(range);
+                    } catch (error) {
+                        console.error("Error placing caret:", error);
+                    }
+                }
+
+                if (close_help && help_modal && input) {
+                    close_help.addEventListener("click", () => {
+                        try {
+                            help_modal.style.display = "none";
+                            input.focus();
+                            place_caret_end(input);
+                        } catch (error) {
+                            console.error("Error closing help modal:", error);
+                        }
+                    });
+
+                    help_modal.addEventListener("click", (event) => {
+                        try {
+                            if (event.target === help_modal) {
+                                help_modal.style.display = "none";
+                                input.focus();
+                                place_caret_end(input);
+                            }
+                        } catch (error) {
+                            console.error("Error handling help modal click:", error);
+                        }
+                    });
+                }
+
+                if (help_tab_btns.length > 0 && help_tab_contents.length > 0) {
+                    help_tab_btns.forEach(btn => {
+                        btn.addEventListener("click", () => {
+                            try {
+                                help_tab_btns.forEach(b => b.classList.remove("active"));
+                                help_tab_contents.forEach(c => c.classList.add("hidden"));
+                                btn.classList.add("active");
+                                const targetTab = document.getElementById(btn.dataset.tab + "-tab");
+                                if (targetTab) {
+                                    targetTab.classList.remove("hidden");
+                                }
+                            } catch (error) {
+                                console.error("Error switching tabs:", error);
+                            }
+                        });
+                    });
+                }
+
+                // Command items
+                const cmd_items = document.querySelectorAll(".cmd-item");
+                cmd_items.forEach(item => {
+                    item.addEventListener("click", (e) => {
+                        try {
+                            if (e.target.classList.contains("cmd-detail")) {
+                                return;
+                            }
+                            const is_expanded = item.classList.contains("expanded");
+                            cmd_items.forEach(other_item => {
+                                if (other_item !== item) {
+                                    other_item.classList.remove("expanded");
+                                }
+                            });
+                            if (is_expanded) {
+                                item.classList.remove("expanded");
+                            } else {
+                                item.classList.add("expanded");
+                            }
+                        } catch (error) {
+                            console.error("Error handling cmd item click:", error);
+                        }
+                    });
+                });
+            } catch (error) {
+                console.error("Error initializing UI:", error);
+            }
+        })();
+    </script>
+</body>
+
 </html>
